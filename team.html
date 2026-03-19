@@ -75,16 +75,17 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
 .station:active{transform:scale(0.97)}
 
 /* Chair — bigger */
-.chair{width:14vw;height:14vw;border-radius:50%;background:#3a3a3a;border:2px solid #222;position:relative;display:flex;align-items:center;justify-content:center}
+.chair{width:14vw;height:10vw;border-radius:4px 4px 2px 2px;background:#2a2a2a;border:2px solid #444;position:relative;display:flex;align-items:center;justify-content:center}
 
-/* Character SVG — bigger */
+/* Character SVG — bigger, fatter */
 .char-svg{width:13vw;height:17vw;image-rendering:pixelated;position:absolute;top:-9vw;z-index:5;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))}
 .char-svg.bob{}
 
-/* Desk */
-.desk{width:13vw;height:5vh;background:#e8e0d8;border:2px solid #aaa;border-radius:1px;position:relative;margin-top:-1vh;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,0.3)}
-.monitor{width:4.5vw;height:2.2vh;background:#1a1a2e;border:1.5px solid #333;border-radius:1px;position:relative;overflow:hidden}
-.monitor .screen{position:absolute;inset:1px;animation:flicker 3s ease-in-out infinite}
+/* Desk — looks like actual desk with laptop */
+.desk{width:16vw;height:4vh;background:linear-gradient(180deg,#d4c4a8,#bfaf93);border:2px solid #8a7a5a;border-radius:2px;position:relative;margin-top:-0.5vh;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 6px rgba(0,0,0,0.3)}
+.monitor{width:8vw;height:2.8vh;background:#111;border:2px solid #555;border-radius:2px 2px 0 0;position:relative;overflow:hidden;box-shadow:0 0 4px rgba(0,100,255,0.2)}
+.monitor .screen{position:absolute;inset:2px;animation:flicker 3s ease-in-out infinite}
+.monitor::after{content:'';position:absolute;bottom:-3px;left:25%;width:50%;height:3px;background:#555;border-radius:0 0 2px 2px}
 
 /* Name label — bolder */
 .name-label{font-size:10px;font-weight:800;color:#fff;margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,0.8);white-space:nowrap}
@@ -275,7 +276,7 @@ function charSVG(a, size) {
     const jc = a.hair==='beanie-messy'?'#6a5acd':a.hair==='beret'?'#cc4444':a.hair==='hood'?'#f4a460':a.hair==='wizard'?'#7b2fbe':a.hair==='pink-beanie'?'#e75480':a.hair==='ushanka'?'#3a8a5a':'#999';
 
     // ONE continuous head+body shape (jacket color)
-    svg += `<path d="M12,45 Q12,4 35,2 Q58,4 58,45 L58,65 Q58,68 55,68 L15,68 Q12,68 12,65 Z" fill="${jc}" stroke="#000" stroke-width="2.5"/>`;
+    svg += `<path d="M8,42 Q8,2 35,0 Q62,2 62,42 L62,66 Q62,69 58,69 L12,69 Q8,69 8,66 Z" fill="${jc}" stroke="#000" stroke-width="2.5"/>`;
 
     // Face oval (skin) on upper portion
     if (a.hair === 'hood') {
@@ -478,7 +479,7 @@ fetchBTC();setInterval(fetchBTC,15000);
 
 // Admin Got SVG — gold suit, crown
 const adminSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 85">
-<path d="M12,45 Q12,4 35,2 Q58,4 58,45 L58,65 Q58,68 55,68 L15,68 Q12,68 12,65 Z" fill="#1a1a2e" stroke="#000" stroke-width="2.5"/>
+<path d="M8,42 Q8,2 35,0 Q62,2 62,42 L62,66 Q62,69 58,69 L12,69 Q8,69 8,66 Z" fill="#1a1a2e" stroke="#000" stroke-width="2.5"/>
 <ellipse cx="35" cy="28" rx="17" ry="15" fill="#FDDEB5" stroke="#000" stroke-width="1.5"/>
 <polygon points="22,-4 26,8 30,0 35,10 40,0 44,8 48,-4" fill="#f7c948" stroke="#000" stroke-width="1.5"/>
 <rect x="20" y="6" width="30" height="5" rx="2" fill="#f7c948" stroke="#000" stroke-width="1.5"/>
