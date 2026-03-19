@@ -40,24 +40,27 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
 .window::after{right:0}
 .window .pane{width:1px;height:100%;background:#3a2210;position:absolute}
 
-/* Zone badges — realistic office wall signs */
-.zone-badge{
-  position:absolute;z-index:8;
-  padding:3px 10px;
-  display:flex;align-items:center;gap:5px;
+/* Office signs */
+.office-sign{
+  position:absolute;z-index:9;
+  padding:4px 14px;
+  background:#222;
+  border:2px solid #555;
+  border-radius:4px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.5px;
+  color:#fff;
+  box-shadow:0 3px 8px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.15);
   pointer-events:none;
-  background:linear-gradient(180deg,#444 0%,#333 40%,#2a2a2a 100%);
-  border:1px solid #555;
-  border-radius:2px;
-  box-shadow:0 2px 4px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1);
+  white-space:nowrap;
+  text-align:center;
 }
-.zone-badge .icon{font-size:9px}
-.zone-badge .info .title{font-size:7px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
-.zone-badge .info .sub{display:none}
-
-.zone-badge.boss{color:#f7c948;border-bottom:2px solid #f7c948}
-.zone-badge.analysts{color:#b388ff;border-bottom:2px solid #b388ff}
-.zone-badge.traders{color:#69f0ae;border-bottom:2px solid #69f0ae}
+.office-sign.gold{border-color:#f7c948;color:#f7c948;background:linear-gradient(180deg,#2a2210,#1a1508)}
+.office-sign.purple{border-color:#b388ff;color:#b388ff;background:linear-gradient(180deg,#1a1028,#120a1e)}
+.office-sign.green{border-color:#69f0ae;color:#69f0ae;background:linear-gradient(180deg,#0a2818,#061a10)}
+.office-sign.blue{border-color:#64b5f6;color:#64b5f6;background:linear-gradient(180deg,#0a1828,#06101e)}
+.office-sign.orange{border-color:#ffb74d;color:#ffb74d;background:linear-gradient(180deg,#2a1a08,#1a1004)}
 
 /* Boss desk — small, top-left */
 .boss-desk{
@@ -164,12 +167,17 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
     <div class="wall-seg"><div class="bookshelf" style="width:60%"><div class="book" style="height:65%;background:#84c"></div><div class="book" style="height:80%;background:#4c8"></div><div class="book" style="height:50%;background:#c84"></div><div class="book" style="height:70%;background:#48c"></div></div></div>
   </div>
 
-  <div class="zone-badge boss" style="top:12%;left:3%"><span class="icon">👔</span><span class="info"><span class="title">Штаб Игоря</span></span></div>
-  <div class="zone-badge analysts" style="top:12%;left:50%;transform:translateX(-50%)"><span class="icon">📊</span><span class="info"><span class="title">Аналитики</span></span></div>
-  <div class="zone-badge traders" style="top:54%;left:50%;transform:translateX(-50%)"><span class="icon">💰</span><span class="info"><span class="title">Трейдеры</span></span></div>
+  <!-- Office signs -->
+  <div class="office-sign gold" style="top:13%;left:5%">👔 Главный штаб</div>
+  <div class="office-sign purple" style="top:13%;right:5%">📊 Аналитики</div>
+  <div class="office-sign blue" style="top:55%;left:5%">🖥 Серверная</div>
+  <div class="office-sign green" style="top:55%;right:5%">✅ Отдел проверки</div>
 
-  <!-- Zone divider -->
-  <div style="position:absolute;top:55%;left:5%;right:5%;border-top:1px dashed rgba(255,255,255,0.08);z-index:1"></div>
+  <!-- Vertical wall divider between left and right zones -->
+  <div style="position:absolute;top:12%;left:50%;width:2px;height:86%;background:linear-gradient(180deg,#5a3a1e,#3a2210,#5a3a1e);z-index:3;opacity:0.5"></div>
+
+  <!-- Horizontal wall divider between top and bottom rows -->
+  <div style="position:absolute;top:53%;left:2%;right:2%;height:2px;background:linear-gradient(90deg,transparent,#5a3a1e,#3a2210,#5a3a1e,transparent);z-index:3;opacity:0.5"></div>
 
   <!-- Boss desk -->
   <div class="boss-desk">
@@ -204,7 +212,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
 </div>
 
 <script>
-// Agent data
+// Agent data — reordered for 4-zone layout
 const agents=[
 {id:'alf',name:'Альф',role:'Аналитик',strat:'Фундаментальный анализ',task:'Анализ BTC/USDT',color:'#7b42c9',
  hair:'beanie-messy',hairColor:'#7b42c9',skinColor:'#FDDEB5',shirtColor:'#6a35b0',row:1,col:0,emoji:'🧠'},
@@ -214,12 +222,12 @@ const agents=[
  hair:'hood',hairColor:'#1a1a1a',skinColor:'#FDDEB5',shirtColor:'#111',row:1,col:2,emoji:'🔗'},
 {id:'oracle',name:'Оракл',role:'Аналитик',strat:'Сентимент-анализ',task:'Чтение новостей',color:'#8844cc',
  hair:'wizard',hairColor:'#8844cc',skinColor:'#FDDEB5',shirtColor:'#7733bb',row:1,col:3,emoji:'🔮'},
-{id:'rita',name:'Рита',role:'Трейдер',strat:'Скальпинг',task:'Поиск входа ETH',color:'#e968a8',
- hair:'pink-beanie',hairColor:'#e968a8',skinColor:'#FDDEB5',shirtColor:'#d45090',row:2,col:0,emoji:'💹'},
-{id:'hedge',name:'Хедж',role:'Трейдер',strat:'Хеджирование',task:'Балансировка портфеля',color:'#3a8a3a',
- hair:'ushanka',hairColor:'#3a8a3a',skinColor:'#FDDEB5',shirtColor:'#2d7a2d',row:2,col:1,emoji:'🛡️'},
 {id:'bot9000',name:'Бот-9000',role:'Робо-трейдер',strat:'Алгоритмическая торговля',task:'Оптимизация ботов',color:'#8899aa',
- hair:'antenna',hairColor:'#8899aa',skinColor:'#b0bec5',shirtColor:'#78909c',isRobot:true,row:2,col:2,emoji:'🤖'}
+ hair:'antenna',hairColor:'#8899aa',skinColor:'#b0bec5',shirtColor:'#78909c',isRobot:true,row:2,col:0,emoji:'🤖'},
+{id:'rita',name:'Рита',role:'Трейдер',strat:'Скальпинг',task:'Поиск входа ETH',color:'#e968a8',
+ hair:'pink-beanie',hairColor:'#e968a8',skinColor:'#FDDEB5',shirtColor:'#d45090',row:2,col:1,emoji:'💹'},
+{id:'hedge',name:'Хедж',role:'Трейдер',strat:'Хеджирование',task:'Балансировка портфеля',color:'#3a8a3a',
+ hair:'ushanka',hairColor:'#3a8a3a',skinColor:'#FDDEB5',shirtColor:'#2d7a2d',row:2,col:2,emoji:'🛡️'}
 ];
 
 // Generate South Park style character SVG
@@ -321,8 +329,8 @@ for(let i=0;i<18*12;i++){
 // Place stations
 const office=document.getElementById('office');
 const row1Y=28,row2Y=70;
-const row1X=[6,28,50,74];
-const row2X=[14,40,66];
+const row1X=[15,35,65,85];
+const row2X=[25,65,85];
 
 agents.forEach(a=>{
  const st=document.createElement('div');
