@@ -181,13 +181,25 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
   <div style="position:absolute;top:53%;left:2%;right:2%;height:2px;background:linear-gradient(90deg,transparent,#5a3a1e,#3a2210,#5a3a1e,transparent);z-index:3;opacity:0.5"></div>
 
   <!-- Boss desk -->
+
+  <!-- Admin Got — center, between rows -->
+  <div class="station" id="station-admin" style="left:50%;top:48%;transform:translateX(-50%);z-index:6" onclick="openModal({name:'Got ⚡',role:'Главный Админ',strat:'Мультиагентное управление',task:'Координирует все отделы'})">
+    <div style="position:relative;display:flex;flex-direction:column;align-items:center">
+      <div style="position:relative">
+        <div class="chair" style="width:16vw;height:16vw;background:#2a2a2a;border:2px solid #f7c948"></div>
+        <div class="char-svg" style="width:14vw;height:19vw;top:-10vw" id="admin-svg"></div>
+      </div>
+      <div class="desk" style="width:18vw;background:#d4c4a8;border-color:#f7c948"><div class="monitor" style="width:6vw;height:2.5vh;border-color:#f7c948"><div class="screen" style="background:#1a4a1a"></div></div></div>
+      <div class="name-label" style="color:#f7c948;font-size:11px">Got ⚡</div>
+    </div>
+  </div>
 </div>
 
 <!-- BOTTOM PANEL -->
 <div id="panel">
   <div id="panel-header">
     <span class="ph-title">⚡ Gotham3032 AI Office</span>
-    <span class="ph-stat">Агентов: 7 · Активных: <span style="color:#4caf50">7</span></span>
+    <span class="ph-stat">Агентов: 8 · Активных: <span style="color:#4caf50">8</span></span>
   </div>
   <div id="agent-list"></div>
 </div>
@@ -443,6 +455,46 @@ async function fetchBTC(){
  }catch(e){document.getElementById('btcPrice').textContent='₿ —'}
 }
 fetchBTC();setInterval(fetchBTC,15000);
+
+// Admin Got SVG — gold suit, crown
+const adminSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 90">
+<circle cx="35" cy="28" r="22" fill="#FDDEB5" stroke="#000" stroke-width="2.5"/>
+<polygon points="22,-2 26,10 30,2 35,12 40,2 44,10 48,-2" fill="#f7c948" stroke="#000" stroke-width="1.5"/>
+<rect x="20" y="8" width="30" height="6" rx="2" fill="#f7c948" stroke="#000" stroke-width="1.5"/>
+<ellipse cx="28" cy="26" rx="8" ry="9" fill="#fff" stroke="#000" stroke-width="2"><animate attributeName="ry" values="9;9;1;9;9" keyTimes="0;0.42;0.44;0.46;1" dur="4s" repeatCount="indefinite"/></ellipse>
+<ellipse cx="42" cy="26" rx="8" ry="9" fill="#fff" stroke="#000" stroke-width="2"><animate attributeName="ry" values="9;9;1;9;9" keyTimes="0;0.42;0.44;0.46;1" dur="4s" repeatCount="indefinite"/></ellipse>
+<circle cx="30" cy="26" r="3" fill="#111"/>
+<circle cx="44" cy="26" r="3" fill="#111"/>
+<ellipse cx="35" cy="37" rx="5" ry="2.5" fill="#222" stroke="#000" stroke-width="1.5"><animate attributeName="ry" values="2.5;1;2.5;3.5;2.5" dur="3s" repeatCount="indefinite"/></ellipse>
+<ellipse cx="35" cy="60" rx="28" ry="18" fill="#1a1a2e" stroke="#000" stroke-width="2.5"/>
+<rect x="25" y="48" width="20" height="5" rx="1" fill="#f7c948" stroke="#000" stroke-width="1"/>
+<ellipse cx="3" cy="58" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>
+<ellipse cx="67" cy="58" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>
+<rect x="20" y="74" width="12" height="12" rx="2" fill="#111" stroke="#000" stroke-width="2"/>
+<rect x="38" y="74" width="12" height="12" rx="2" fill="#111" stroke="#000" stroke-width="2"/>
+<rect x="18" y="83" width="16" height="6" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>
+<rect x="36" y="83" width="16" height="6" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>
+</svg>`;
+document.getElementById('admin-svg').innerHTML = adminSvg;
+
+// Add admin to agent list
+const adminCard = document.createElement('div');
+adminCard.className = 'agent-card';
+adminCard.style.borderLeftColor = '#f7c948';
+adminCard.style.order = '-1';
+adminCard.innerHTML = `
+  <svg class="ac-avatar" width="32" height="32" viewBox="0 0 70 90">${adminSvg.replace(/<\/?svg[^>]*>/g,'')}</svg>
+  <div class="ac-info">
+    <div class="ac-name">Got ⚡ <span class="ac-dot" style="background:#f7c948"></span></div>
+    <div class="ac-role">👔 Главный Админ</div>
+    <div class="ac-task">Координирует все отделы</div>
+  </div>
+  <div class="ac-status">👑</div>`;
+adminCard.onclick = () => {
+  document.getElementById('station-admin').querySelector('.chair').style.boxShadow = '0 0 12px 4px rgba(247,201,72,0.5)';
+  setTimeout(() => document.getElementById('station-admin').querySelector('.chair').style.boxShadow = '', 2000);
+};
+document.getElementById('agent-list').prepend(adminCard);
 
 // Telegram WebApp
 try{
