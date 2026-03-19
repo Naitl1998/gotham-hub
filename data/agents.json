@@ -97,16 +97,17 @@
       "name": "Бот-9000",
       "role": "Алго-трейдер",
       "enabled": true,
-      "status": "idle",
-      "lastRun": null,
-      "signal": null,
+      "status": "done",
+      "lastRun": "2026-03-19T15:55:00.000Z",
+      "signal": "HOLD",
       "strategy": "algorithmic",
       "balance": 10000,
       "trades": 0,
       "wins": 0,
       "losses": 0,
       "pnl": 0,
-      "openPositions": []
+      "openPositions": [],
+      "analysis": "BTC $69,412 | RSI(14)=30.3 — на границе перепроданности, но выше 30 → HOLD. Консенсус аналитиков: SELL×1, HOLD×2, BUY×1 — нет единого направления, совпадает с моим HOLD. Позиция не открыта. Жду RSI<30 для входа в лонг."
     }
   }
 }
