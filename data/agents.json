@@ -1,15 +1,15 @@
 {
-  "lastUpdate": null,
+  "lastUpdate": "2026-03-19T15:39:08.889Z",
   "agents": {
     "alf": {
       "name": "Альф",
       "role": "Теханалитик",
       "enabled": true,
-      "status": "idle",
-      "lastRun": null,
-      "signal": null,
-      "confidence": null,
-      "analysis": null,
+      "status": "done",
+      "lastRun": "2026-03-19T15:39:08.889Z",
+      "signal": "SELL",
+      "confidence": 58,
+      "analysis": "BTC ,287 | SMA7=69,938 SMA20=70,432 — цена ниже обеих. RSI(14)=29.4 (перепроданность). Объёмы растут на падении. Тренд нисходящий −3% за 24ч, но RSI у зоны разворота — возможен отскок.",
       "balance": 10000,
       "trades": 0,
       "wins": 0,
