@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Gotham3032</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg,#0d1117);color:var(--text,#e6edf3);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px;-webkit-tap-highlight-color:transparent}
+.header{text-align:center;margin-bottom:40px;animation:fadeDown .6s ease}
+.logo{font-size:32px;font-weight:700;background:linear-gradient(135deg,#58a6ff,#bc8cff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{color:var(--hint,#8b949e);margin-top:8px;font-size:15px}
+.cards{display:flex;flex-direction:column;gap:20px;width:100%;max-width:400px;flex:1}
+.card{position:relative;border-radius:16px;padding:28px 24px;background:var(--card-bg,#161b22);cursor:pointer;transition:transform .2s,box-shadow .3s;animation:fadeUp .6s ease both;overflow:hidden}
+.card:nth-child(2){animation-delay:.12s}
+.card::before{content:'';position:absolute;inset:0;border-radius:16px;padding:1.5px;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;-webkit-mask-composite:xor;pointer-events:none}
+.card.analysis::before{background:linear-gradient(135deg,#58a6ff,#bc8cff)}
+.card.team::before{background:linear-gradient(135deg,#3fb950,#58d5c5)}
+.card:hover,.card:active{transform:translateY(-2px)}
+.card.analysis:hover{box-shadow:0 0 30px rgba(88,166,255,.15)}
+.card.team:hover{box-shadow:0 0 30px rgba(63,185,80,.15)}
+.card-icon{font-size:40px;margin-bottom:12px}
+.card-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.card.analysis .card-title{color:#58a6ff}
+.card.team .card-title{color:#3fb950}
+.card-desc{color:var(--hint,#8b949e);font-size:14px}
+.card-arrow{position:absolute;right:20px;top:50%;transform:translateY(-50%);color:var(--hint,#8b949e);font-size:20px;transition:transform .2s}
+.card:hover .card-arrow{transform:translateY(-50%) translateX(3px)}
+.footer{margin-top:40px;color:var(--hint,#8b949e);font-size:12px;opacity:.5;animation:fadeUp .6s ease .2s both}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">⚡ Gotham3032</div>
+  <div class="subtitle">Выбери раздел</div>
+</div>
+<div class="cards">
+  <div class="card analysis" onclick="go('https://naitl1998.github.io/polymarket-analyzer/')">
+    <div class="card-icon">📊</div>
+    <div class="card-title">Анализ</div>
+    <div class="card-desc">Крипто-анализ BTC &amp; ETH</div>
+    <div class="card-arrow">›</div>
+  </div>
+  <div class="card team" onclick="go('https://naitl1998.github.io/gotham-team/')">
+    <div class="card-icon">👥</div>
+    <div class="card-title">Команда</div>
+    <div class="card-desc">Наши агенты за работой</div>
+    <div class="card-arrow">›</div>
+  </div>
+</div>
+<div class="footer">v1.0</div>
+<script>
+try{
+  const tg=window.Telegram&&Telegram.WebApp;
+  if(tg){
+    tg.ready();
+    tg.expand();
+    const tp=tg.themeParams;
+    if(tp){
+      const s=document.documentElement.style;
+      if(tp.bg_color)s.setProperty('--bg',tp.bg_color);
+      if(tp.text_color)s.setProperty('--text',tp.text_color);
+      if(tp.hint_color)s.setProperty('--hint',tp.hint_color);
+      if(tp.secondary_bg_color)s.setProperty('--card-bg',tp.secondary_bg_color);
+    }
+  }
+}catch(e){}
+function go(url){
+  try{if(Telegram&&Telegram.WebApp){Telegram.WebApp.openLink(url);return}}catch(e){}
+  window.location.href=url;
+}
+</script>
+</body>
+</html>
