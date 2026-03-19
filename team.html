@@ -269,8 +269,8 @@ function charSVG(a, size) {
   } else {
     const sk = '#FDDEB5';
     
-    // BIG round head
-    svg += `<circle cx="35" cy="28" r="22" fill="${sk}" stroke="#000" stroke-width="2.5"/>`;
+    // BIG round head — same size as body like Cartman
+    svg += `<circle cx="35" cy="30" r="26" fill="${sk}" stroke="#000" stroke-width="2.5"/>`;
 
     // HATS (unique per character)
     if (a.hair === 'beanie-messy') {
@@ -330,20 +330,20 @@ function charSVG(a, size) {
 
     // FAT ROUND BODY (wider than head!)
     const jc = a.hair==='beanie-messy'?'#6a5acd':a.hair==='beret'?'#cc4444':a.hair==='hood'?'#f4a460':a.hair==='wizard'?'#7b2fbe':a.hair==='pink-beanie'?'#e75480':a.hair==='ushanka'?'#3a8a5a':'#999';
-    svg += `<ellipse cx="35" cy="60" rx="28" ry="18" fill="${jc}" stroke="#000" stroke-width="2.5"/>`;
+    svg += `<ellipse cx="35" cy="66" rx="24" ry="14" fill="${jc}" stroke="#000" stroke-width="2.5"/>`;
     
     // YELLOW MITTEN HANDS
-    svg += `<ellipse cx="3" cy="58" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>`;
-    svg += `<ellipse cx="67" cy="58" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>`;
+    svg += `<ellipse cx="8" cy="64" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>`;
+    svg += `<ellipse cx="62" cy="64" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>`;
 
     // SHORT STUBBY LEGS
     const lc = a.hair==='hood'?'#c48444':'#333';
-    svg += `<rect x="20" y="74" width="12" height="12" rx="2" fill="${lc}" stroke="#000" stroke-width="2"/>`;
-    svg += `<rect x="38" y="74" width="12" height="12" rx="2" fill="${lc}" stroke="#000" stroke-width="2"/>`;
+    svg += `<rect x="22" y="77" width="10" height="9" rx="2" fill="${lc}" stroke="#000" stroke-width="2"/>`;
+    svg += `<rect x="38" y="77" width="10" height="9" rx="2" fill="${lc}" stroke="#000" stroke-width="2"/>`;
     
     // Shoes
-    svg += `<rect x="18" y="83" width="16" height="6" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>`;
-    svg += `<rect x="36" y="83" width="16" height="6" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>`;
+    svg += `<rect x="20" y="84" width="14" height="5" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>`;
+    svg += `<rect x="36" y="84" width="14" height="5" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>`;
   }
 
   svg += `</svg>`;
@@ -466,14 +466,14 @@ const adminSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 90">
 <circle cx="30" cy="26" r="3" fill="#111"/>
 <circle cx="44" cy="26" r="3" fill="#111"/>
 <ellipse cx="35" cy="37" rx="5" ry="2.5" fill="#222" stroke="#000" stroke-width="1.5"><animate attributeName="ry" values="2.5;1;2.5;3.5;2.5" dur="3s" repeatCount="indefinite"/></ellipse>
-<ellipse cx="35" cy="60" rx="28" ry="18" fill="#1a1a2e" stroke="#000" stroke-width="2.5"/>
+<ellipse cx="35" cy="66" rx="24" ry="14" fill="#1a1a2e" stroke="#000" stroke-width="2.5"/>
 <rect x="25" y="48" width="20" height="5" rx="1" fill="#f7c948" stroke="#000" stroke-width="1"/>
-<ellipse cx="3" cy="58" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>
-<ellipse cx="67" cy="58" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>
-<rect x="20" y="74" width="12" height="12" rx="2" fill="#111" stroke="#000" stroke-width="2"/>
-<rect x="38" y="74" width="12" height="12" rx="2" fill="#111" stroke="#000" stroke-width="2"/>
-<rect x="18" y="83" width="16" height="6" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>
-<rect x="36" y="83" width="16" height="6" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>
+<ellipse cx="8" cy="64" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>
+<ellipse cx="62" cy="64" rx="7" ry="5" fill="#FFD700" stroke="#000" stroke-width="2"/>
+<rect x="22" y="77" width="10" height="9" rx="2" fill="#111" stroke="#000" stroke-width="2"/>
+<rect x="38" y="77" width="10" height="9" rx="2" fill="#111" stroke="#000" stroke-width="2"/>
+<rect x="20" y="84" width="14" height="5" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>
+<rect x="36" y="84" width="14" height="5" rx="3" fill="#222" stroke="#000" stroke-width="1.5"/>
 </svg>`;
 document.getElementById('admin-svg').innerHTML = adminSvg;
 
