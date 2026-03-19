@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏢 Команда Gotham3032</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1a1a2e;--card:#16213e;--neon-purple:#a855f7;--neon-cyan:#22d3ee;--neon-green:#4ade80;--neon-red:#f87171;--outline:#000;--skin:#fdd;--hoodie:#4338ca;--hoodie-dark:#3730a3;--hair:#5b4a3f;--desk:#8b6f47;--monitor:#111;--chair:#444}
+body{background:var(--bg);color:#e2e8f0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+/* stars */
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(1px 1px at 10% 20%,#fff3,transparent),radial-gradient(1px 1px at 30% 70%,#fff2,transparent),radial-gradient(1px 1px at 50% 30%,#fff3,transparent),radial-gradient(1px 1px at 70% 80%,#fff2,transparent),radial-gradient(1px 1px at 90% 10%,#fff3,transparent),radial-gradient(1px 1px at 15% 90%,#fff2,transparent),radial-gradient(1px 1px at 80% 50%,#fff3,transparent),radial-gradient(1.5px 1.5px at 25% 45%,#fff4,transparent),radial-gradient(1.5px 1.5px at 65% 15%,#fff4,transparent),radial-gradient(1.5px 1.5px at 85% 75%,#fff4,transparent);pointer-events:none;z-index:0}
+/* grid */
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(168,85,247,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1rem}
+header{text-align:center;margin-bottom:2.5rem}
+h1{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:900;background:linear-gradient(90deg,var(--neon-purple),var(--neon-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem}
+.subtitle{color:#94a3b8;font-size:1.05rem}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem;justify-items:center}
+/* card */
+.agent-card{background:var(--card);border:2px solid rgba(168,85,247,.25);border-radius:20px;padding:1.5rem;width:100%;max-width:420px;position:relative;overflow:hidden;box-shadow:0 0 30px rgba(168,85,247,.1)}
+.agent-card::before{content:'';position:absolute;inset:-2px;border-radius:20px;background:linear-gradient(135deg,var(--neon-purple),var(--neon-cyan));z-index:-1;opacity:.15}
+/* scene */
+.scene{position:relative;width:100%;height:320px;margin-bottom:1rem}
+/* desk */
+.desk{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);width:240px;height:14px;background:var(--desk);border:3px solid var(--outline);border-radius:3px}
+.desk-leg{position:absolute;bottom:4px;width:8px;height:28px;background:var(--desk);border:2px solid var(--outline)}
+.desk-leg.l{left:50%;transform:translateX(-50%);margin-left:-60px}
+.desk-leg.r{left:50%;transform:translateX(-50%);margin-left:60px}
+/* chair */
+.chair{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);margin-left:0}
+.chair-seat{width:60px;height:10px;background:var(--chair);border:2px solid var(--outline);border-radius:4px;position:relative;left:-30px}
+.chair-back{width:50px;height:45px;background:var(--chair);border:3px solid var(--outline);border-radius:8px 8px 0 0;position:relative;left:-25px;top:0}
+.chair-pole{width:6px;height:16px;background:#666;border:1.5px solid var(--outline);position:relative;left:-3px}
+.chair-wheel{width:40px;height:6px;background:#555;border:2px solid var(--outline);border-radius:3px;position:relative;left:-20px}
+/* character SVG */
+.character{position:absolute;bottom:52px;left:50%;transform:translateX(-50%);animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-2px)}}
+/* monitor */
+.monitor-wrap{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);margin-left:0}
+.monitor{width:110px;height:72px;background:var(--monitor);border:4px solid var(--outline);border-radius:5px;position:relative;overflow:hidden;animation:glow 2s ease-in-out infinite alternate;margin-left:-55px}
+@keyframes glow{0%{box-shadow:0 0 8px rgba(34,211,238,.3)}100%{box-shadow:0 0 20px rgba(34,211,238,.5)}}
+.monitor-stand{width:20px;height:10px;background:#333;border:2px solid var(--outline);margin-left:-10px;position:relative}
+.monitor-base{width:40px;height:5px;background:#333;border:2px solid var(--outline);border-radius:2px;margin-left:-20px;position:relative}
+/* monitor screen content */
+.screen{position:absolute;inset:3px;display:flex;flex-direction:column;font-size:7px;color:var(--neon-green);padding:2px;gap:1px}
+.screen .ticker{display:flex;justify-content:space-between;font-weight:700;font-size:6.5px;line-height:1.2}
+.screen .ticker .red{color:var(--neon-red)}
+.screen .ticker .green{color:var(--neon-green)}
+.candles{flex:1;display:flex;align-items:flex-end;gap:1px;padding-top:2px}
+.candle{width:4px;display:flex;flex-direction:column;align-items:center;position:relative}
+.candle .wick{width:1px;height:var(--wick,4px);background:currentColor}
+.candle .body{width:3px;height:var(--body,6px);background:currentColor;border-radius:.5px}
+.candle.green{color:var(--neon-green)}.candle.red{color:var(--neon-red)}
+@keyframes flicker{0%,100%{opacity:1}50%{opacity:.85}}
+.screen{animation:flicker 4s ease-in-out infinite}
+/* keyboard */
+.keyboard{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:70px;height:10px;background:#555;border:2px solid var(--outline);border-radius:2px;margin-top:2px}
+.keyboard::after{content:'';position:absolute;inset:2px;background:repeating-linear-gradient(90deg,#777 0,#777 4px,#444 4px,#444 5.5px);border-radius:1px}
+/* energy drink */
+.energy-drink{position:absolute;width:10px;height:18px;background:#22c55e;border:2px solid var(--outline);border-radius:2px 2px 1px 1px}
+.energy-drink::after{content:'⚡';font-size:6px;position:absolute;top:4px;left:1px}
+/* phone */
+.phone{position:absolute;width:12px;height:20px;background:#222;border:2px solid var(--outline);border-radius:2px}
+.phone::after{content:'';position:absolute;inset:2px;background:linear-gradient(180deg,var(--neon-green) 30%,var(--neon-red) 70%);border-radius:1px}
+/* speech bubble */
+.bubble-wrap{position:absolute;top:10px;right:10px;width:140px;min-height:40px}
+.bubble{background:#fff;color:#1a1a2e;font-size:.7rem;font-weight:600;padding:8px 10px;border-radius:12px;border:3px solid var(--outline);position:relative;opacity:1;transition:opacity .5s}
+.bubble::after{content:'';position:absolute;bottom:-10px;left:20px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid var(--outline)}
+.bubble::before{content:'';position:absolute;bottom:-6px;left:22px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #fff;z-index:1}
+/* name */
+.agent-name{text-align:center;margin-top:.5rem}
+.agent-name h2{font-size:1.4rem;font-weight:900;color:#fff}
+.agent-name .role{color:var(--neon-cyan);font-size:.85rem;font-weight:600}
+.status{text-align:center;margin-top:.4rem;font-size:.78rem;color:var(--neon-green);font-weight:600}
+/* hands animation */
+@keyframes typing{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+.hands{animation:typing .3s ease-in-out infinite}
+/* blink */
+@keyframes blink{0%,92%,100%{ry:5px}95%{ry:1px}}
+.eye-w{animation:blink 4s infinite}
+/* footer */
+.footer{text-align:center;margin-top:3rem;color:#475569;font-size:.9rem}
+.footer span{color:var(--neon-purple)}
+@media(max-width:500px){.scene{height:280px}.monitor{width:90px;height:60px;margin-left:-45px}.bubble-wrap{width:110px;top:5px;right:5px}.bubble{font-size:.6rem;padding:6px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🏢 Команда Gotham3032</h1>
+    <p class="subtitle">Наши агенты за работой</p>
+  </header>
+
+  <div class="team-grid">
+    <div class="agent-card">
+      <div class="scene">
+        <!-- Speech bubble -->
+        <div class="bubble-wrap"><div class="bubble" id="bubble">BTC к луне! 🚀</div></div>
+
+        <!-- Monitor -->
+        <div class="monitor-wrap" style="margin-left:-40px">
+          <div class="monitor">
+            <div class="screen">
+              <div class="ticker">
+                <span class="green" id="btcPrice">BTC $--</span>
+                <span id="ethPrice" class="green">ETH $--</span>
+              </div>
+              <div class="candles" id="candles"></div>
+            </div>
+          </div>
+          <div class="monitor-stand"></div>
+          <div class="monitor-base"></div>
+        </div>
+
+        <!-- Keyboard -->
+        <div class="keyboard hands" style="margin-left:-36px"></div>
+
+        <!-- Energy drink -->
+        <div class="energy-drink" style="bottom:44px;left:calc(50% + 60px)"></div>
+        <!-- Phone -->
+        <div class="phone" style="bottom:44px;left:calc(50% + 80px)"></div>
+
+        <!-- Character (SVG) -->
+        <svg class="character" width="80" height="120" viewBox="0 0 80 120" style="margin-left:30px">
+          <!-- Legs -->
+          <rect x="25" y="100" width="12" height="16" rx="3" fill="#222" stroke="#000" stroke-width="2.5"/>
+          <rect x="43" y="100" width="12" height="16" rx="3" fill="#222" stroke="#000" stroke-width="2.5"/>
+          <!-- Shoes -->
+          <rect x="23" y="112" width="16" height="6" rx="3" fill="#333" stroke="#000" stroke-width="2"/>
+          <rect x="41" y="112" width="16" height="6" rx="3" fill="#333" stroke="#000" stroke-width="2"/>
+          <!-- Body (hoodie) -->
+          <ellipse cx="40" cy="88" rx="22" ry="22" fill="var(--hoodie)" stroke="#000" stroke-width="3"/>
+          <!-- Hoodie pocket -->
+          <rect x="28" y="88" width="24" height="8" rx="3" fill="var(--hoodie-dark)" stroke="#000" stroke-width="1.5"/>
+          <!-- Arms -->
+          <g class="hands">
+            <rect x="8" y="78" width="14" height="8" rx="4" fill="var(--hoodie)" stroke="#000" stroke-width="2.5" transform="rotate(-15 15 82)"/>
+            <circle cx="8" cy="84" r="4" fill="var(--skin)" stroke="#000" stroke-width="2"/>
+            <rect x="58" y="78" width="14" height="8" rx="4" fill="var(--hoodie)" stroke="#000" stroke-width="2.5" transform="rotate(15 65 82)"/>
+            <circle cx="72" cy="84" r="4" fill="var(--skin)" stroke="#000" stroke-width="2"/>
+          </g>
+          <!-- Head -->
+          <circle cx="40" cy="45" r="24" fill="var(--skin)" stroke="#000" stroke-width="3"/>
+          <!-- Messy hair -->
+          <path d="M18 38 Q20 15 40 18 Q60 15 62 38 Q58 28 50 25 Q42 20 34 25 Q26 28 18 38Z" fill="var(--hair)" stroke="#000" stroke-width="2.5"/>
+          <path d="M22 32 Q18 20 28 18" fill="var(--hair)" stroke="#000" stroke-width="2"/>
+          <path d="M58 32 Q62 20 52 18" fill="var(--hair)" stroke="#000" stroke-width="2"/>
+          <path d="M36 20 Q40 12 44 20" fill="var(--hair)" stroke="#000" stroke-width="2"/>
+          <!-- Headphones band -->
+          <path d="M16 42 Q16 22 40 20 Q64 22 64 42" fill="none" stroke="#555" stroke-width="4" stroke-linecap="round"/>
+          <!-- Headphone cups -->
+          <ellipse cx="16" cy="44" rx="6" ry="8" fill="#444" stroke="#000" stroke-width="2.5"/>
+          <ellipse cx="64" cy="44" rx="6" ry="8" fill="#444" stroke="#000" stroke-width="2.5"/>
+          <ellipse cx="16" cy="44" rx="3" ry="5" fill="#333"/>
+          <ellipse cx="64" cy="44" rx="3" ry="5" fill="#333"/>
+          <!-- Eyes -->
+          <ellipse class="eye-w" cx="32" cy="46" rx="7" ry="5" fill="#fff" stroke="#000" stroke-width="2"/>
+          <ellipse class="eye-w" cx="48" cy="46" rx="7" ry="5" fill="#fff" stroke="#000" stroke-width="2"/>
+          <circle cx="33" cy="46" r="2.5" fill="#000"/>
+          <circle cx="49" cy="46" r="2.5" fill="#000"/>
+          <circle cx="34" cy="45" r=".8" fill="#fff"/>
+          <circle cx="50" cy="45" r=".8" fill="#fff"/>
+          <!-- Mouth -->
+          <path d="M35 56 Q40 60 45 56" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Chair (behind character) -->
+        <div class="chair" style="margin-left:30px">
+          <div class="chair-back"></div>
+          <div class="chair-seat"></div>
+          <div class="chair-pole"></div>
+          <div class="chair-wheel"></div>
+        </div>
+
+        <!-- Desk legs -->
+        <div class="desk"><div class="desk-leg l"></div><div class="desk-leg r"></div></div>
+      </div>
+
+      <div class="agent-name">
+        <h2>Альф</h2>
+        <p class="role">Крипто-аналитик 📊</p>
+      </div>
+      <p class="status">🟢 Онлайн — анализирует рынок</p>
+    </div>
+  </div>
+
+  <p class="footer">✨ <span>Скоро: новые агенты...</span></p>
+</div>
+
+<script>
+// Speech bubble rotation
+const quotes = [
+  "BTC к луне! 🚀",
+  "Покупай на страхе, продавай на жадности",
+  "HODL — это не просто слово, это образ жизни",
+  "Альткоины? Только после анализа!",
+  "Не инвестируй больше, чем готов потерять 💡",
+  "Медвежий рынок — время учиться 📚",
+  "DCA — лучшая стратегия для новичков",
+  "Диверсификация — наше всё 🎯"
+];
+let qi = 0;
+const bubble = document.getElementById('bubble');
+setInterval(() => {
+  bubble.style.opacity = '0';
+  setTimeout(() => {
+    qi = (qi + 1) % quotes.length;
+    bubble.textContent = quotes[qi];
+    bubble.style.opacity = '1';
+  }, 500);
+}, 5000);
+
+// Generate candles
+const candlesEl = document.getElementById('candles');
+function genCandles() {
+  candlesEl.innerHTML = '';
+  for (let i = 0; i < 14; i++) {
+    const g = Math.random() > 0.45;
+    const body = 4 + Math.random() * 14;
+    const wick = 2 + Math.random() * 5;
+    const d = document.createElement('div');
+    d.className = 'candle ' + (g ? 'green' : 'red');
+    d.innerHTML = `<div class="wick" style="--wick:${wick}px"></div><div class="body" style="--body:${body}px"></div>`;
+    candlesEl.appendChild(d);
+  }
+}
+genCandles();
+setInterval(genCandles, 3000);
+
+// Binance prices
+const btcEl = document.getElementById('btcPrice');
+const ethEl = document.getElementById('ethPrice');
+async function fetchPrices() {
+  try {
+    const r = await fetch('https://api.binance.com/api/v3/ticker/price?symbols=["BTCUSDT","ETHUSDT"]');
+    const d = await r.json();
+    const m = {};
+    d.forEach(t => m[t.symbol] = parseFloat(t.price));
+    if (m.BTCUSDT) {
+      btcEl.textContent = 'BTC $' + Math.round(m.BTCUSDT).toLocaleString();
+    }
+    if (m.ETHUSDT) {
+      ethEl.textContent = 'ETH $' + Math.round(m.ETHUSDT).toLocaleString();
+    }
+  } catch(e) {
+    btcEl.textContent = 'BTC $---';
+    ethEl.textContent = 'ETH $---';
+  }
+}
+fetchPrices();
+setInterval(fetchPrices, 10000);
+</script>
+</body>
+</html>

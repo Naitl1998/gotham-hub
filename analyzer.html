@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polymarket Analyzer — BTC & ETH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--green:#3fb950;--red:#f85149;--yellow:#d29922;--blue:#58a6ff;--purple:#bc8cff}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.container{max-width:1200px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.logo{font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.prices{display:flex;gap:16px;flex-wrap:wrap}
+.price-badge{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 16px;display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600}
+.price-badge .symbol{color:var(--muted);font-weight:500}
+.change.up{color:var(--green)}.change.down{color:var(--red)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.btn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:8px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.85rem;font-weight:600;transition:all .2s}
+.btn:hover{border-color:var(--blue);color:var(--text)}
+.btn.active{background:linear-gradient(135deg,rgba(88,166,255,.15),rgba(188,140,255,.15));border-color:var(--blue);color:var(--text)}
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;position:relative}
+#chart{width:100%;height:400px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px}
+.card{background:linear-gradient(145deg,var(--card),#1c2333);border:1px solid var(--border);border-radius:12px;padding:20px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.card h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
+.trend-value{font-size:1.6rem;font-weight:700;margin-bottom:4px}
+.trend-label{font-size:.85rem;color:var(--muted)}
+.rec{font-size:1.1rem;font-weight:600;margin-top:8px;padding:10px 16px;border-radius:8px;text-align:center}
+.rec.up{background:rgba(63,185,80,.12);color:var(--green)}
+.rec.down{background:rgba(248,81,73,.12);color:var(--red)}
+.rec.wait{background:rgba(210,153,34,.12);color:var(--yellow)}
+.levels{display:flex;gap:16px;margin-top:8px}
+.level{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:.85rem;font-weight:600}
+.level.sup{background:rgba(63,185,80,.1);color:var(--green)}
+.level.res{background:rgba(248,81,73,.1);color:var(--red)}
+.verdict-card{background:linear-gradient(145deg,#1a1f2e,#161b22);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center}
+.verdict-card h2{font-size:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.verdict-text{font-size:1.3rem;font-weight:700;margin-bottom:8px}
+.verdict-sub{color:var(--muted);font-size:.9rem}
+.refresh-bar{text-align:center;color:var(--muted);font-size:.75rem;padding:12px;opacity:.6}
+.momentum-bar{height:6px;border-radius:3px;background:var(--border);margin-top:8px;overflow:hidden}
+.momentum-fill{height:100%;border-radius:3px;transition:width .5s}
+@media(max-width:600px){#chart{height:300px}.trend-value{font-size:1.3rem}.container{padding:10px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">⚡ Polymarket Analyzer</div>
+    <div class="prices" id="prices"></div>
+  </header>
+  <div class="controls">
+    <button class="btn active" data-coin="BTC" onclick="setCoin('BTC')">BTC</button>
+    <button class="btn" data-coin="ETH" onclick="setCoin('ETH')">ETH</button>
+    <span style="width:8px"></span>
+    <button class="btn active" data-tf="1h" onclick="setTF('1h')">1H</button>
+    <button class="btn" data-tf="15m" onclick="setTF('15m')">15M</button>
+    <button class="btn" data-tf="5m" onclick="setTF('5m')">5M</button>
+  </div>
+  <div class="chart-wrap"><div id="chart"></div></div>
+  <div class="grid" id="analysis"></div>
+  <div class="verdict-card" id="verdict"></div>
+  <div class="refresh-bar" id="timer">Обновление через 60с</div>
+</div>
+<script>
+const API='https://api.binance.com/api/v3/klines';
+let coin='BTC',tf='1h',chart,series,sma7Line,sma20Line;
+const cache={};
+
+function initChart(){
+  const el=document.getElementById('chart');
+  el.innerHTML='';
+  chart=LightweightCharts.createChart(el,{
+    width:el.clientWidth,height:el.clientHeight,
+    layout:{background:{type:'solid',color:'#161b22'},textColor:'#8b949e',fontFamily:'Inter'},
+    grid:{vertLines:{color:'#21262d'},horzLines:{color:'#21262d'}},
+    crosshair:{mode:0},
+    timeScale:{timeVisible:true,borderColor:'#30363d'},
+    rightPriceScale:{borderColor:'#30363d'}
+  });
+  series=chart.addCandlestickSeries({upColor:'#3fb950',downColor:'#f85149',borderUpColor:'#3fb950',borderDownColor:'#f85149',wickUpColor:'#3fb950',wickDownColor:'#f85149'});
+  sma7Line=chart.addLineSeries({color:'#58a6ff',lineWidth:1,priceLineVisible:false,lastValueVisible:false});
+  sma20Line=chart.addLineSeries({color:'#bc8cff',lineWidth:1,priceLineVisible:false,lastValueVisible:false});
+  new ResizeObserver(()=>chart.applyOptions({width:el.clientWidth})).observe(el);
+}
+
+function parseKlines(data){
+  return data.map(k=>({time:k[0]/1000,open:+k[1],high:+k[2],low:+k[3],close:+k[4],volume:+k[5]}));
+}
+
+function sma(data,period){
+  const r=[];
+  for(let i=0;i<data.length;i++){
+    if(i<period-1){r.push(null);continue}
+    let s=0;for(let j=i-period+1;j<=i;j++)s+=data[j].close;
+    r.push({time:data[i].time,value:s/period});
+  }
+  return r.filter(x=>x);
+}
+
+function rsi(data,period=14){
+  if(data.length<period+1)return 50;
+  let gains=0,losses=0;
+  for(let i=data.length-period;i<data.length;i++){
+    const d=data[i].close-data[i-1].close;
+    if(d>0)gains+=d;else losses-=d;
+  }
+  const ag=gains/period,al=losses/period;
+  if(al===0)return 100;
+  return 100-100/(1+ag/al);
+}
+
+function analyze(candles){
+  const s7=sma(candles,7),s20=sma(candles,20);
+  const r=rsi(candles);
+  const last=candles[candles.length-1];
+  const sma7v=s7.length?s7[s7.length-1].value:last.close;
+  const sma20v=s20.length?s20[s20.length-1].value:last.close;
+  const lows=candles.map(c=>c.low),highs=candles.map(c=>c.high);
+  const support=Math.min(...lows),resistance=Math.max(...highs);
+  const avgVol=candles.reduce((a,c)=>a+c.volume,0)/candles.length;
+  const recentVol=candles.slice(-3).reduce((a,c)=>a+c.volume,0)/3;
+  const volStrength=recentVol/avgVol;
+  let trend='SIDEWAYS',trendColor='var(--yellow)';
+  if(sma7v>sma20v*1.001&&last.close>sma7v){trend='UP';trendColor='var(--green)'}
+  else if(sma7v<sma20v*0.999&&last.close<sma7v){trend='DOWN';trendColor='var(--red)'}
+  let momentum='умеренный',momPct=50;
+  if(r>65){momentum='сильный бычий';momPct=Math.min(95,r)}
+  else if(r>55){momentum='умеренный бычий';momPct=r}
+  else if(r<35){momentum='сильный медвежий';momPct=Math.max(5,100-r)}
+  else if(r<45){momentum='умеренный медвежий';momPct=100-r}
+  else{momentum='нейтральный';momPct=50}
+  let rec,recClass;
+  if(trend==='UP'&&r>50){rec='Ставка на рост 📈';recClass='up'}
+  else if(trend==='DOWN'&&r<50){rec='Ставка на падение 📉';recClass='down'}
+  else{rec='Выжидать ⏳';recClass='wait'}
+  const score=(trend==='UP'?1:trend==='DOWN'?-1:0)*0.4+(r-50)/50*0.4+(volStrength>1.2?0.2:volStrength<0.8?-0.1:0);
+  return{trend,trendColor,momentum,momPct,rsi:r,rec,recClass,support,resistance,sma7:s7,sma20:s20,volStrength,score,price:last.close};
+}
+
+async function fetchData(symbol,interval){
+  const key=symbol+interval;
+  try{
+    const res=await fetch(`${API}?symbol=${symbol}USDT&interval=${interval}&limit=48`);
+    const d=await res.json();
+    cache[key]=parseKlines(d);
+  }catch(e){if(!cache[key])cache[key]=[]}
+  return cache[key]||[];
+}
+
+async function loadAll(){
+  const pairs=['BTC','ETH'],tfs=['1h','15m','5m'];
+  const promises=[];
+  for(const p of pairs)for(const t of tfs)promises.push(fetchData(p,t));
+  await Promise.all(promises);
+}
+
+function updatePrices(){
+  const el=document.getElementById('prices');
+  let h='';
+  for(const c of['BTC','ETH']){
+    const d=cache[c+'1h'];
+    if(!d||!d.length)continue;
+    const last=d[d.length-1].close,first=d[0].open;
+    const chg=((last-first)/first*100).toFixed(2);
+    const cls=chg>=0?'up':'down';
+    const sign=chg>=0?'+':'';
+    const fmt=c==='BTC'?last.toLocaleString('en',{maximumFractionDigits:0}):last.toLocaleString('en',{maximumFractionDigits:2});
+    h+=`<div class="price-badge"><span class="symbol">${c}</span>$${fmt} <span class="change ${cls}">${sign}${chg}%</span></div>`;
+  }
+  el.innerHTML=h;
+}
+
+function updateChart(){
+  const d=cache[coin+tf];
+  if(!d||!d.length)return;
+  const a=analyze(d);
+  series.setData(d.map(c=>({time:c.time,open:c.open,high:c.high,low:c.low,close:c.close})));
+  sma7Line.setData(a.sma7);sma20Line.setData(a.sma20);
+  chart.timeScale().fitContent();
+}
+
+function updateAnalysis(){
+  const d=cache[coin+tf];
+  if(!d||!d.length)return;
+  const a=analyze(d);
+  const trendRu={UP:'РОСТ ↑',DOWN:'ПАДЕНИЕ ↓',SIDEWAYS:'БОКОВИК →'};
+  const momColor=a.rsi>55?'var(--green)':a.rsi<45?'var(--red)':'var(--yellow)';
+  document.getElementById('analysis').innerHTML=`
+    <div class="card">
+      <h3>Тренд</h3>
+      <div class="trend-value" style="color:${a.trendColor}">${trendRu[a.trend]}</div>
+      <div class="trend-label">SMA(7) ${a.sma7.length?'$'+a.sma7[a.sma7.length-1].value.toFixed(2):'-'} / SMA(20) ${a.sma20.length?'$'+a.sma20[a.sma20.length-1].value.toFixed(2):'-'}</div>
+    </div>
+    <div class="card">
+      <h3>Моментум (RSI: ${a.rsi.toFixed(1)})</h3>
+      <div class="trend-value" style="color:${momColor}">${a.momentum}</div>
+      <div class="momentum-bar"><div class="momentum-fill" style="width:${a.momPct}%;background:${momColor}"></div></div>
+      <div class="trend-label" style="margin-top:8px">Объём: ${a.volStrength>1.2?'повышенный 🔥':a.volStrength<0.8?'пониженный':'нормальный'}</div>
+    </div>
+    <div class="card">
+      <h3>Рекомендация</h3>
+      <div class="rec ${a.recClass}">${a.rec}</div>
+      <div class="levels">
+        <div class="level sup">Поддержка<br><b>$${a.support.toLocaleString('en',{maximumFractionDigits:2})}</b></div>
+        <div class="level res">Сопротивление<br><b>$${a.resistance.toLocaleString('en',{maximumFractionDigits:2})}</b></div>
+      </div>
+    </div>`;
+}
+
+function updateVerdict(){
+  const btc=cache['BTC'+tf],eth=cache['ETH'+tf];
+  if(!btc||!eth||!btc.length||!eth.length){document.getElementById('verdict').innerHTML='';return}
+  const ab=analyze(btc),ae=analyze(eth);
+  let winner,reason;
+  if(ab.score>ae.score+0.1){winner='BTC';reason=`BTC показывает более сильный моментум (RSI ${ab.rsi.toFixed(0)} vs ${ae.rsi.toFixed(0)})`}
+  else if(ae.score>ab.score+0.1){winner='ETH';reason=`ETH показывает более сильный моментум (RSI ${ae.rsi.toFixed(0)} vs ${ab.rsi.toFixed(0)})`}
+  else{winner='ПАРИТЕТ';reason=`Оба актива в схожем состоянии (BTC RSI ${ab.rsi.toFixed(0)}, ETH RSI ${ae.rsi.toFixed(0)})`}
+  const emoji=winner==='BTC'?'₿':winner==='ETH'?'Ξ':'⚖️';
+  document.getElementById('verdict').innerHTML=`
+    <h2>BTC vs ETH — куда лучше ставить?</h2>
+    <div class="verdict-text">${emoji} ${winner==='ПАРИТЕТ'?'Примерный паритет':winner+' предпочтительнее'}</div>
+    <div class="verdict-sub">${reason}</div>`;
+}
+
+function setCoin(c){coin=c;document.querySelectorAll('[data-coin]').forEach(b=>b.classList.toggle('active',b.dataset.coin===c));render()}
+function setTF(t){tf=t;document.querySelectorAll('[data-tf]').forEach(b=>b.classList.toggle('active',b.dataset.tf===t));render()}
+function render(){updateChart();updateAnalysis();updateVerdict()}
+
+let countdown=60;
+function tick(){document.getElementById('timer').textContent=`Обновление через ${countdown}с`;if(--countdown<0){countdown=60;refresh()}}
+
+async function refresh(){await loadAll();updatePrices();render()}
+
+initChart();
+refresh();
+setInterval(tick,1000);
+</script>
+</body>
+</html>
