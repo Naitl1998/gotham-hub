@@ -65,16 +65,17 @@
       "name": "Рита",
       "role": "Агрессивный трейдер",
       "enabled": true,
-      "status": "idle",
-      "lastRun": null,
-      "signal": null,
+      "status": "done",
+      "lastRun": "2026-03-19T15:54:00.000Z",
+      "signal": "HOLD",
       "strategy": "aggressive",
       "balance": 10000,
       "trades": 0,
       "wins": 0,
       "losses": 0,
       "pnl": 0,
-      "openPositions": []
+      "openPositions": [],
+      "analysis": "Сигналы разнонаправленные: Альф — SELL, Оракл — BUY, остальные — HOLD. Нет консенсуса 2+ аналитиков в одну сторону — сижу на заборе, жду чёткий сигнал."
     },
     "hedge": {
       "name": "Хедж",
