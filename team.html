@@ -3,254 +3,500 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🏢 Команда Gotham3032</title>
+<title>Gotham3032 HQ — Команда</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#1a1a2e;--card:#16213e;--neon-purple:#a855f7;--neon-cyan:#22d3ee;--neon-green:#4ade80;--neon-red:#f87171;--outline:#000;--skin:#fdd;--hoodie:#4338ca;--hoodie-dark:#3730a3;--hair:#5b4a3f;--desk:#8b6f47;--monitor:#111;--chair:#444}
-body{background:var(--bg);color:#e2e8f0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
-/* stars */
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(1px 1px at 10% 20%,#fff3,transparent),radial-gradient(1px 1px at 30% 70%,#fff2,transparent),radial-gradient(1px 1px at 50% 30%,#fff3,transparent),radial-gradient(1px 1px at 70% 80%,#fff2,transparent),radial-gradient(1px 1px at 90% 10%,#fff3,transparent),radial-gradient(1px 1px at 15% 90%,#fff2,transparent),radial-gradient(1px 1px at 80% 50%,#fff3,transparent),radial-gradient(1.5px 1.5px at 25% 45%,#fff4,transparent),radial-gradient(1.5px 1.5px at 65% 15%,#fff4,transparent),radial-gradient(1.5px 1.5px at 85% 75%,#fff4,transparent);pointer-events:none;z-index:0}
-/* grid */
-body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(168,85,247,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1rem}
-header{text-align:center;margin-bottom:2.5rem}
-h1{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:900;background:linear-gradient(90deg,var(--neon-purple),var(--neon-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem}
-.subtitle{color:#94a3b8;font-size:1.05rem}
-.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem;justify-items:center}
-/* card */
-.agent-card{background:var(--card);border:2px solid rgba(168,85,247,.25);border-radius:20px;padding:1.5rem;width:100%;max-width:420px;position:relative;overflow:hidden;box-shadow:0 0 30px rgba(168,85,247,.1)}
-.agent-card::before{content:'';position:absolute;inset:-2px;border-radius:20px;background:linear-gradient(135deg,var(--neon-purple),var(--neon-cyan));z-index:-1;opacity:.15}
-/* scene */
-.scene{position:relative;width:100%;height:320px;margin-bottom:1rem}
-/* desk */
-.desk{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);width:240px;height:14px;background:var(--desk);border:3px solid var(--outline);border-radius:3px}
-.desk-leg{position:absolute;bottom:4px;width:8px;height:28px;background:var(--desk);border:2px solid var(--outline)}
-.desk-leg.l{left:50%;transform:translateX(-50%);margin-left:-60px}
-.desk-leg.r{left:50%;transform:translateX(-50%);margin-left:60px}
-/* chair */
-.chair{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);margin-left:0}
-.chair-seat{width:60px;height:10px;background:var(--chair);border:2px solid var(--outline);border-radius:4px;position:relative;left:-30px}
-.chair-back{width:50px;height:45px;background:var(--chair);border:3px solid var(--outline);border-radius:8px 8px 0 0;position:relative;left:-25px;top:0}
-.chair-pole{width:6px;height:16px;background:#666;border:1.5px solid var(--outline);position:relative;left:-3px}
-.chair-wheel{width:40px;height:6px;background:#555;border:2px solid var(--outline);border-radius:3px;position:relative;left:-20px}
-/* character SVG */
-.character{position:absolute;bottom:52px;left:50%;transform:translateX(-50%);animation:breathe 3s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-2px)}}
-/* monitor */
-.monitor-wrap{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);margin-left:0}
-.monitor{width:110px;height:72px;background:var(--monitor);border:4px solid var(--outline);border-radius:5px;position:relative;overflow:hidden;animation:glow 2s ease-in-out infinite alternate;margin-left:-55px}
-@keyframes glow{0%{box-shadow:0 0 8px rgba(34,211,238,.3)}100%{box-shadow:0 0 20px rgba(34,211,238,.5)}}
-.monitor-stand{width:20px;height:10px;background:#333;border:2px solid var(--outline);margin-left:-10px;position:relative}
-.monitor-base{width:40px;height:5px;background:#333;border:2px solid var(--outline);border-radius:2px;margin-left:-20px;position:relative}
-/* monitor screen content */
-.screen{position:absolute;inset:3px;display:flex;flex-direction:column;font-size:7px;color:var(--neon-green);padding:2px;gap:1px}
-.screen .ticker{display:flex;justify-content:space-between;font-weight:700;font-size:6.5px;line-height:1.2}
-.screen .ticker .red{color:var(--neon-red)}
-.screen .ticker .green{color:var(--neon-green)}
-.candles{flex:1;display:flex;align-items:flex-end;gap:1px;padding-top:2px}
-.candle{width:4px;display:flex;flex-direction:column;align-items:center;position:relative}
-.candle .wick{width:1px;height:var(--wick,4px);background:currentColor}
-.candle .body{width:3px;height:var(--body,6px);background:currentColor;border-radius:.5px}
-.candle.green{color:var(--neon-green)}.candle.red{color:var(--neon-red)}
-@keyframes flicker{0%,100%{opacity:1}50%{opacity:.85}}
-.screen{animation:flicker 4s ease-in-out infinite}
-/* keyboard */
-.keyboard{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:70px;height:10px;background:#555;border:2px solid var(--outline);border-radius:2px;margin-top:2px}
-.keyboard::after{content:'';position:absolute;inset:2px;background:repeating-linear-gradient(90deg,#777 0,#777 4px,#444 4px,#444 5.5px);border-radius:1px}
-/* energy drink */
-.energy-drink{position:absolute;width:10px;height:18px;background:#22c55e;border:2px solid var(--outline);border-radius:2px 2px 1px 1px}
-.energy-drink::after{content:'⚡';font-size:6px;position:absolute;top:4px;left:1px}
-/* phone */
-.phone{position:absolute;width:12px;height:20px;background:#222;border:2px solid var(--outline);border-radius:2px}
-.phone::after{content:'';position:absolute;inset:2px;background:linear-gradient(180deg,var(--neon-green) 30%,var(--neon-red) 70%);border-radius:1px}
-/* speech bubble */
-.bubble-wrap{position:absolute;top:10px;right:10px;width:140px;min-height:40px}
-.bubble{background:#fff;color:#1a1a2e;font-size:.7rem;font-weight:600;padding:8px 10px;border-radius:12px;border:3px solid var(--outline);position:relative;opacity:1;transition:opacity .5s}
-.bubble::after{content:'';position:absolute;bottom:-10px;left:20px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid var(--outline)}
-.bubble::before{content:'';position:absolute;bottom:-6px;left:22px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #fff;z-index:1}
-/* name */
-.agent-name{text-align:center;margin-top:.5rem}
-.agent-name h2{font-size:1.4rem;font-weight:900;color:#fff}
-.agent-name .role{color:var(--neon-cyan);font-size:.85rem;font-weight:600}
-.status{text-align:center;margin-top:.4rem;font-size:.78rem;color:var(--neon-green);font-weight:600}
-/* hands animation */
-@keyframes typing{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
-.hands{animation:typing .3s ease-in-out infinite}
-/* blink */
-@keyframes blink{0%,92%,100%{ry:5px}95%{ry:1px}}
-.eye-w{animation:blink 4s infinite}
-/* footer */
-.footer{text-align:center;margin-top:3rem;color:#475569;font-size:.9rem}
-.footer span{color:var(--neon-purple)}
-@media(max-width:500px){.scene{height:280px}.monitor{width:90px;height:60px;margin-left:-45px}.bubble-wrap{width:110px;top:5px;right:5px}.bubble{font-size:.6rem;padding:6px}}
+body{font-family:'Inter',sans-serif;background:#1a1a2e;color:#e0e0e0;min-height:100vh;overflow-x:hidden}
+/* Floor tile pattern */
+body::before{content:'';position:fixed;inset:0;z-index:0;opacity:.06;
+background:repeating-conic-gradient(#fff 0% 25%, transparent 0% 50%) 0 0/40px 40px}
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:12px 8px 80px}
+
+/* HQ Sign */
+.hq-sign{text-align:center;padding:18px 0 10px;position:relative}
+.hq-sign h1{font-size:28px;font-weight:900;color:#f7c948;text-shadow:0 0 20px rgba(247,201,72,.4),2px 2px 0 #000;letter-spacing:2px}
+.hq-sign .subtitle{font-size:12px;color:#888;margin-top:2px}
+
+/* Boss Dashboard */
+.boss-dashboard{background:linear-gradient(135deg,#16213e,#1a1a2e);border:2px solid #f7c948;border-radius:16px;padding:16px;margin:12px 0;position:relative;overflow:hidden}
+.boss-dashboard::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 4px);pointer-events:none}
+.boss-title{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.boss-title .nameplate{background:#2a1a0a;border:2px solid #f7c948;border-radius:6px;padding:4px 14px;font-weight:700;color:#f7c948;font-size:14px}
+.boss-title .live{font-size:10px;color:#0f0;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3}}
+.trader-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.trader-stat{background:rgba(255,255,255,.05);border-radius:8px;padding:10px;text-align:center;border:1px solid rgba(255,255,255,.1)}
+.trader-stat .t-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.trader-stat .t-balance{font-size:16px;font-weight:700;color:#4ade80}
+.trader-stat .t-wr{font-size:11px;color:#888}
+
+/* Whiteboard */
+.whiteboard{background:#f5f5dc;border:3px solid #8B4513;border-radius:8px;padding:10px 14px;margin:10px 0;color:#222;display:flex;align-items:center;justify-content:space-between;position:relative}
+.whiteboard::before{content:'📌';position:absolute;top:-8px;left:14px;font-size:16px}
+.wb-label{font-size:12px;font-weight:700}
+.wb-price{font-size:20px;font-weight:900;color:#e67e22;font-family:monospace}
+
+/* Furniture row */
+.furniture{display:flex;justify-content:center;gap:20px;margin:10px 0;flex-wrap:wrap}
+.furniture-item{text-align:center;position:relative}
+.furniture-item svg{width:50px;height:60px}
+.furniture-label{font-size:9px;color:#666;margin-top:2px}
+
+/* Zone headers */
+.zone-header{display:flex;align-items:center;gap:8px;margin:16px 0 8px;padding:6px 12px;border-radius:8px}
+.zone-header.analysts{background:linear-gradient(90deg,rgba(139,92,246,.2),transparent);border-left:3px solid #8b5cf6}
+.zone-header.traders{background:linear-gradient(90deg,rgba(234,88,12,.2),transparent);border-left:3px solid #ea580c}
+.zone-header h2{font-size:16px;font-weight:700}
+
+/* Character grid */
+.char-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:600px){.char-grid.analysts{grid-template-columns:repeat(4,1fr)}.char-grid.traders{grid-template-columns:repeat(3,1fr)}}
+
+/* Workstation */
+.workstation{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 8px 10px;text-align:center;cursor:pointer;transition:transform .2s;position:relative}
+.workstation:hover{transform:scale(1.04)}
+.workstation:active{transform:scale(.97)}
+
+/* Speech bubble */
+.speech-bubble{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:#fff;color:#222;font-size:10px;padding:4px 8px;border-radius:10px;white-space:nowrap;opacity:0;transition:opacity .3s;z-index:5;pointer-events:none;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.speech-bubble::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#fff}
+.speech-bubble.show{opacity:1}
+
+/* Character SVG */
+.char-svg{width:80px;height:100px;margin:0 auto;animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+/* Monitor */
+.monitor{width:70px;height:44px;margin:4px auto 2px;background:#111;border:2px solid #555;border-radius:4px;overflow:hidden;position:relative;animation:flicker 4s infinite}
+@keyframes flicker{0%,97%,100%{opacity:1}98%{opacity:.85}}
+.monitor canvas{width:100%;height:100%}
+
+/* Desk */
+.desk-surface{width:76px;height:6px;background:linear-gradient(#8B6914,#a07828);margin:0 auto;border-radius:0 0 3px 3px}
+
+.char-name{font-size:12px;font-weight:700;margin-top:4px}
+.char-role{font-size:10px;color:#999}
+.char-status{font-size:9px;color:#4ade80;margin-top:2px}
+
+/* Clock */
+.clock{font-family:monospace;font-size:14px;font-weight:700;color:#f7c948}
+
+/* Popup overlay */
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+.popup-overlay.show{display:flex}
+.popup-card{background:#16213e;border:2px solid #f7c948;border-radius:16px;padding:20px;max-width:340px;width:100%;position:relative}
+.popup-card .close-btn{position:absolute;top:8px;right:12px;font-size:20px;cursor:pointer;color:#888}
+.popup-card h3{font-size:18px;margin-bottom:4px}
+.popup-card .p-role{color:#f7c948;font-size:13px;margin-bottom:8px}
+.popup-card .p-strategy{background:rgba(255,255,255,.05);padding:8px;border-radius:8px;font-size:12px;margin-bottom:8px}
+.popup-card .p-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}
+.popup-card .p-stat{background:rgba(255,255,255,.05);border-radius:8px;padding:8px 4px}
+.popup-card .p-stat .val{font-size:16px;font-weight:700;color:#4ade80}
+.popup-card .p-stat .lbl{font-size:10px;color:#888}
+
+/* Steam animation */
+.steam{position:absolute;top:-10px;left:50%;transform:translateX(-50%)}
+.steam-particle{position:absolute;width:6px;height:6px;background:rgba(255,255,255,.3);border-radius:50%;animation:steam-rise 2s infinite}
+@keyframes steam-rise{0%{opacity:.6;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-20px) scale(2)}}
+
+/* Bubbles */
+.bubble{position:absolute;width:4px;height:4px;background:rgba(100,200,255,.4);border-radius:50%;animation:bubble-up 3s infinite}
+@keyframes bubble-up{0%{opacity:.5;transform:translateY(0)}100%{opacity:0;transform:translateY(-30px)}}
+
+/* Back button area */
+.back-area{text-align:center;padding:16px 0}
+.back-btn{background:rgba(255,255,255,.1);color:#fff;border:none;padding:10px 24px;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
+
 <div class="container">
-  <header>
-    <h1>🏢 Команда Gotham3032</h1>
-    <p class="subtitle">Наши агенты за работой</p>
-  </header>
+  <!-- HQ Sign -->
+  <div class="hq-sign">
+    <h1>🏢 GOTHAM3032 HQ</h1>
+    <div class="subtitle">Крипто-офис • Аналитика & Трейдинг</div>
+  </div>
 
-  <div class="team-grid">
-    <div class="agent-card">
-      <div class="scene">
-        <!-- Speech bubble -->
-        <div class="bubble-wrap"><div class="bubble" id="bubble">BTC к луне! 🚀</div></div>
-
-        <!-- Monitor -->
-        <div class="monitor-wrap" style="margin-left:-40px">
-          <div class="monitor">
-            <div class="screen">
-              <div class="ticker">
-                <span class="green" id="btcPrice">BTC $--</span>
-                <span id="ethPrice" class="green">ETH $--</span>
-              </div>
-              <div class="candles" id="candles"></div>
-            </div>
-          </div>
-          <div class="monitor-stand"></div>
-          <div class="monitor-base"></div>
-        </div>
-
-        <!-- Keyboard -->
-        <div class="keyboard hands" style="margin-left:-36px"></div>
-
-        <!-- Energy drink -->
-        <div class="energy-drink" style="bottom:44px;left:calc(50% + 60px)"></div>
-        <!-- Phone -->
-        <div class="phone" style="bottom:44px;left:calc(50% + 80px)"></div>
-
-        <!-- Character (SVG) -->
-        <svg class="character" width="80" height="120" viewBox="0 0 80 120" style="margin-left:30px">
-          <!-- Legs -->
-          <rect x="25" y="100" width="12" height="16" rx="3" fill="#222" stroke="#000" stroke-width="2.5"/>
-          <rect x="43" y="100" width="12" height="16" rx="3" fill="#222" stroke="#000" stroke-width="2.5"/>
-          <!-- Shoes -->
-          <rect x="23" y="112" width="16" height="6" rx="3" fill="#333" stroke="#000" stroke-width="2"/>
-          <rect x="41" y="112" width="16" height="6" rx="3" fill="#333" stroke="#000" stroke-width="2"/>
-          <!-- Body (hoodie) -->
-          <ellipse cx="40" cy="88" rx="22" ry="22" fill="var(--hoodie)" stroke="#000" stroke-width="3"/>
-          <!-- Hoodie pocket -->
-          <rect x="28" y="88" width="24" height="8" rx="3" fill="var(--hoodie-dark)" stroke="#000" stroke-width="1.5"/>
-          <!-- Arms -->
-          <g class="hands">
-            <rect x="8" y="78" width="14" height="8" rx="4" fill="var(--hoodie)" stroke="#000" stroke-width="2.5" transform="rotate(-15 15 82)"/>
-            <circle cx="8" cy="84" r="4" fill="var(--skin)" stroke="#000" stroke-width="2"/>
-            <rect x="58" y="78" width="14" height="8" rx="4" fill="var(--hoodie)" stroke="#000" stroke-width="2.5" transform="rotate(15 65 82)"/>
-            <circle cx="72" cy="84" r="4" fill="var(--skin)" stroke="#000" stroke-width="2"/>
-          </g>
-          <!-- Head -->
-          <circle cx="40" cy="45" r="24" fill="var(--skin)" stroke="#000" stroke-width="3"/>
-          <!-- Messy hair -->
-          <path d="M18 38 Q20 15 40 18 Q60 15 62 38 Q58 28 50 25 Q42 20 34 25 Q26 28 18 38Z" fill="var(--hair)" stroke="#000" stroke-width="2.5"/>
-          <path d="M22 32 Q18 20 28 18" fill="var(--hair)" stroke="#000" stroke-width="2"/>
-          <path d="M58 32 Q62 20 52 18" fill="var(--hair)" stroke="#000" stroke-width="2"/>
-          <path d="M36 20 Q40 12 44 20" fill="var(--hair)" stroke="#000" stroke-width="2"/>
-          <!-- Headphones band -->
-          <path d="M16 42 Q16 22 40 20 Q64 22 64 42" fill="none" stroke="#555" stroke-width="4" stroke-linecap="round"/>
-          <!-- Headphone cups -->
-          <ellipse cx="16" cy="44" rx="6" ry="8" fill="#444" stroke="#000" stroke-width="2.5"/>
-          <ellipse cx="64" cy="44" rx="6" ry="8" fill="#444" stroke="#000" stroke-width="2.5"/>
-          <ellipse cx="16" cy="44" rx="3" ry="5" fill="#333"/>
-          <ellipse cx="64" cy="44" rx="3" ry="5" fill="#333"/>
-          <!-- Eyes -->
-          <ellipse class="eye-w" cx="32" cy="46" rx="7" ry="5" fill="#fff" stroke="#000" stroke-width="2"/>
-          <ellipse class="eye-w" cx="48" cy="46" rx="7" ry="5" fill="#fff" stroke="#000" stroke-width="2"/>
-          <circle cx="33" cy="46" r="2.5" fill="#000"/>
-          <circle cx="49" cy="46" r="2.5" fill="#000"/>
-          <circle cx="34" cy="45" r=".8" fill="#fff"/>
-          <circle cx="50" cy="45" r=".8" fill="#fff"/>
-          <!-- Mouth -->
-          <path d="M35 56 Q40 60 45 56" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-
-        <!-- Chair (behind character) -->
-        <div class="chair" style="margin-left:30px">
-          <div class="chair-back"></div>
-          <div class="chair-seat"></div>
-          <div class="chair-pole"></div>
-          <div class="chair-wheel"></div>
-        </div>
-
-        <!-- Desk legs -->
-        <div class="desk"><div class="desk-leg l"></div><div class="desk-leg r"></div></div>
+  <!-- Boss Dashboard -->
+  <div class="boss-dashboard">
+    <div class="boss-title">
+      <span class="nameplate">👔 Шеф Игорь</span>
+      <span class="live">● LIVE</span>
+      <span class="clock" id="clock"></span>
+    </div>
+    <div class="trader-stats">
+      <div class="trader-stat">
+        <div class="t-name">📈 Рита</div>
+        <div class="t-balance">$10,000</div>
+        <div class="t-wr">Win rate: —%</div>
       </div>
-
-      <div class="agent-name">
-        <h2>Альф</h2>
-        <p class="role">Крипто-аналитик 📊</p>
+      <div class="trader-stat">
+        <div class="t-name">🎲 Хедж</div>
+        <div class="t-balance">$10,000</div>
+        <div class="t-wr">Win rate: —%</div>
       </div>
-      <p class="status">🟢 Онлайн — анализирует рынок</p>
+      <div class="trader-stat">
+        <div class="t-name">🤖 Бот-9000</div>
+        <div class="t-balance">$10,000</div>
+        <div class="t-wr">Win rate: —%</div>
+      </div>
     </div>
   </div>
 
-  <p class="footer">✨ <span>Скоро: новые агенты...</span></p>
+  <!-- Whiteboard -->
+  <div class="whiteboard">
+    <div>
+      <div class="wb-label">📋 Whiteboard — BTC/USDT</div>
+    </div>
+    <div class="wb-price" id="btcPrice">загрузка...</div>
+  </div>
+
+  <!-- Furniture -->
+  <div class="furniture">
+    <!-- Fridge -->
+    <div class="furniture-item">
+      <svg viewBox="0 0 50 60">
+        <rect x="8" y="5" width="34" height="50" rx="3" fill="#ccc" stroke="#000" stroke-width="2"/>
+        <line x1="8" y1="28" x2="42" y2="28" stroke="#000" stroke-width="2"/>
+        <rect x="35" y="14" width="3" height="8" rx="1" fill="#666"/>
+        <rect x="35" y="35" width="3" height="8" rx="1" fill="#666"/>
+        <rect x="14" y="10" width="16" height="10" rx="2" fill="#f7c948" stroke="#000" stroke-width="1"/>
+        <text x="22" y="18" font-size="6" font-weight="bold" fill="#000" text-anchor="middle">HODL</text>
+      </svg>
+      <div class="furniture-label">Холодильник</div>
+    </div>
+    <!-- Coffee machine -->
+    <div class="furniture-item" style="position:relative">
+      <svg viewBox="0 0 50 60">
+        <rect x="12" y="20" width="26" height="35" rx="3" fill="#333" stroke="#000" stroke-width="2"/>
+        <rect x="16" y="10" width="18" height="12" rx="2" fill="#555" stroke="#000" stroke-width="1.5"/>
+        <circle cx="25" cy="32" r="4" fill="#e74c3c"/>
+        <rect x="20" y="45" width="10" height="4" rx="1" fill="#8B6914"/>
+        <rect x="22" y="42" width="6" height="4" fill="#6F4E37"/>
+      </svg>
+      <div class="steam">
+        <div class="steam-particle" style="left:-4px;animation-delay:0s"></div>
+        <div class="steam-particle" style="left:2px;animation-delay:.6s"></div>
+        <div class="steam-particle" style="left:8px;animation-delay:1.2s"></div>
+      </div>
+      <div class="furniture-label">Кофемашина</div>
+    </div>
+    <!-- Water cooler -->
+    <div class="furniture-item" style="position:relative">
+      <svg viewBox="0 0 50 60">
+        <rect x="16" y="25" width="18" height="30" rx="2" fill="#ddd" stroke="#000" stroke-width="2"/>
+        <path d="M18 25 L18 10 Q18 5 25 5 Q32 5 32 10 L32 25" fill="#87CEEB" stroke="#000" stroke-width="1.5" opacity=".7"/>
+        <circle cx="22" cy="42" r="3" fill="#4a9eff"/>
+        <circle cx="28" cy="42" r="3" fill="#e74c3c"/>
+      </svg>
+      <div class="bubble" style="left:22px;top:8px;animation-delay:0s"></div>
+      <div class="bubble" style="left:28px;top:12px;animation-delay:1s"></div>
+      <div class="bubble" style="left:25px;top:6px;animation-delay:2s"></div>
+      <div class="furniture-label">Кулер</div>
+    </div>
+    <!-- Plant -->
+    <div class="furniture-item">
+      <svg viewBox="0 0 50 60">
+        <rect x="15" y="35" width="20" height="20" rx="2" fill="#8B4513" stroke="#000" stroke-width="1.5"/>
+        <ellipse cx="25" cy="36" rx="12" ry="3" fill="#5a3010"/>
+        <path d="M25 35 Q20 20 15 15" stroke="#228B22" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M25 35 Q30 18 35 12" stroke="#228B22" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M25 35 Q25 15 25 8" stroke="#2ecc71" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="15" cy="14" r="5" fill="#228B22"/>
+        <circle cx="35" cy="11" r="5" fill="#228B22"/>
+        <circle cx="25" cy="7" r="5" fill="#2ecc71"/>
+      </svg>
+      <div class="furniture-label">Растение</div>
+    </div>
+  </div>
+
+  <!-- ANALYSTS ZONE -->
+  <div class="zone-header analysts">
+    <h2>🔬 Отдел аналитики</h2>
+  </div>
+  <div class="char-grid analysts" id="analystsGrid"></div>
+
+  <!-- TRADERS ZONE -->
+  <div class="zone-header traders">
+    <h2>💹 Отдел трейдинга</h2>
+  </div>
+  <div class="char-grid traders" id="tradersGrid"></div>
+
+  <div class="back-area">
+    <button class="back-btn" onclick="location.href='index.html'">← Назад</button>
+  </div>
+</div>
+
+<!-- Popup -->
+<div class="popup-overlay" id="popup" onclick="if(event.target===this)closePopup()">
+  <div class="popup-card">
+    <span class="close-btn" onclick="closePopup()">✕</span>
+    <h3 id="popupName"></h3>
+    <div class="p-role" id="popupRole"></div>
+    <div class="p-strategy" id="popupStrategy"></div>
+    <div class="p-stats">
+      <div class="p-stat"><div class="val" id="popupBalance">$10,000</div><div class="lbl">Баланс</div></div>
+      <div class="p-stat"><div class="val" id="popupTrades">0</div><div class="lbl">Сделки</div></div>
+      <div class="p-stat"><div class="val" id="popupWR">—%</div><div class="lbl">Win Rate</div></div>
+    </div>
+  </div>
 </div>
 
 <script>
-// Speech bubble rotation
-const quotes = [
-  "BTC к луне! 🚀",
-  "Покупай на страхе, продавай на жадности",
-  "HODL — это не просто слово, это образ жизни",
-  "Альткоины? Только после анализа!",
-  "Не инвестируй больше, чем готов потерять 💡",
-  "Медвежий рынок — время учиться 📚",
-  "DCA — лучшая стратегия для новичков",
-  "Диверсификация — наше всё 🎯"
+// Telegram
+if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();
+Telegram.WebApp.BackButton.show();Telegram.WebApp.BackButton.onClick(()=>location.href='index.html')}
+
+// Characters data
+const chars=[
+{id:'alf',name:'Альф 📊',role:'Технический аналитик',division:'analyst',
+ status:'Анализирует графики',strategy:'Строит паттерны, уровни поддержки и сопротивления, ищет точки входа по графикам.',
+ bubbles:['RSI перекуплен!','Двойное дно?','Фибоначчи не врёт','Свечи говорят...','Паттерн! Вижу паттерн!'],
+ colors:{hoodie:'#7c3aed',skin:'#fdd',hair:'#4a3728',extra:'#ff6b35'}},
+{id:'nova',name:'Нова 📰',role:'Новостной аналитик',division:'analyst',
+ status:'Мониторит новости',strategy:'Отслеживает новости, твиты, регуляторные изменения. Первая узнаёт о движениях рынка.',
+ bubbles:['SEC опять...','Breaking news!','Твиттер горит!','Илон опять твитнул','Китай банит крипту (опять)'],
+ colors:{hoodie:'#dc2626',skin:'#fdd',hair:'#8B4513',extra:'#dc2626'}},
+{id:'satoshi',name:'Сатоши 🔑',role:'On-chain аналитик',division:'analyst',
+ status:'Читает блокчейн',strategy:'Анализирует on-chain метрики: потоки на биржи, активность китов, UTXO.',
+ bubbles:['Кит двигается...','100K BTC на Binance','Хеш-рейт растёт','Мемпул забит','Кто-то вывел 50K ETH'],
+ colors:{hoodie:'#1a1a2e',skin:'#fdd',hair:'#111',extra:'#f7c948'}},
+{id:'orakl',name:'Оракл 🔮',role:'Сентимент-аналитик',division:'analyst',
+ status:'Чувствует рынок',strategy:'Измеряет настроения рынка: Fear & Greed, соцсети, фандинг рейты.',
+ bubbles:['Страх = покупай','Жадность зашкаливает','Я чувствую разворот','Звёзды говорят...','Фандинг отрицательный'],
+ colors:{hoodie:'#7c3aed',skin:'#fdd',hair:'#ddd',extra:'#a855f7'}},
+{id:'rita',name:'Рита 📈',role:'Агрессивный трейдер',division:'trader',
+ status:'Ставит по-крупному',strategy:'Агрессивная стратегия — большие позиции, высокий риск, максимальная прибыль.',
+ bubbles:['ALL IN!!!','10x leverage? Мало!','YOLO!','Риск — дело благородное','Лонг на всё!'],
+ colors:{top:'#ec4899',skin:'#fdd',hair:'#8B4513',extra:'#ec4899'}},
+{id:'hedge',name:'Хедж 🎲',role:'Консервативный трейдер',division:'trader',
+ status:'Считает риски',strategy:'Консервативная стратегия — маленькие ставки, стоп-лоссы, риск-менеджмент.',
+ bubbles:['Стоп-лосс на месте','Риск 1% макс','Диверсификация!','Спокойствие...','Тейк-профит сработал'],
+ colors:{top:'#22c55e',skin:'#fdd',hair:'#654321',extra:'#22c55e'}},
+{id:'bot9000',name:'Бот-9000 🤖',role:'Алго-трейдер',division:'trader',
+ status:'Выполняет алгоритм',strategy:'Алгоритмическая стратегия — автоматические правила, без эмоций.',
+ bubbles:['EXECUTING...','if(dip) buy()','Эмоции = 0','Алгоритм оптимален','BEEP BOOP PROFIT'],
+ colors:{body:'#888',eyes:'#0f0',extra:'#0f0'}}
 ];
-let qi = 0;
-const bubble = document.getElementById('bubble');
-setInterval(() => {
-  bubble.style.opacity = '0';
-  setTimeout(() => {
-    qi = (qi + 1) % quotes.length;
-    bubble.textContent = quotes[qi];
-    bubble.style.opacity = '1';
-  }, 500);
-}, 5000);
 
-// Generate candles
-const candlesEl = document.getElementById('candles');
-function genCandles() {
-  candlesEl.innerHTML = '';
-  for (let i = 0; i < 14; i++) {
-    const g = Math.random() > 0.45;
-    const body = 4 + Math.random() * 14;
-    const wick = 2 + Math.random() * 5;
-    const d = document.createElement('div');
-    d.className = 'candle ' + (g ? 'green' : 'red');
-    d.innerHTML = `<div class="wick" style="--wick:${wick}px"></div><div class="body" style="--body:${body}px"></div>`;
-    candlesEl.appendChild(d);
-  }
-}
-genCandles();
-setInterval(genCandles, 3000);
+// Draw South Park character SVG
+function charSVG(c){
+ if(c.id==='bot9000') return `<svg viewBox="0 0 80 100" class="char-svg">
+  <rect x="20" y="8" width="40" height="35" rx="4" fill="#777" stroke="#000" stroke-width="2.5"/>
+  <line x1="40" y1="2" x2="40" y2="8" stroke="#000" stroke-width="2"/>
+  <circle cx="40" cy="2" r="3" fill="#f00"/>
+  <circle cx="30" cy="22" r="5" fill="#111" stroke="#0f0" stroke-width="1.5"/>
+  <circle cx="50" cy="22" r="5" fill="#111" stroke="#0f0" stroke-width="1.5"/>
+  <circle cx="30" cy="22" r="2" fill="#0f0"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" repeatCount="indefinite"/></circle>
+  <circle cx="50" cy="22" r="2" fill="#0f0"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" repeatCount="indefinite" begin=".5s"/></circle>
+  <rect x="32" y="32" width="16" height="2" rx="1" fill="#555"/>
+  <rect x="22" y="43" width="36" height="30" rx="3" fill="#999" stroke="#000" stroke-width="2.5"/>
+  <rect x="28" y="50" width="6" height="3" rx="1" fill="#0f0"><animate attributeName="opacity" values="1;0;1" dur=".8s" repeatCount="indefinite"/></rect>
+  <rect x="37" y="50" width="6" height="3" rx="1" fill="#0f0"><animate attributeName="opacity" values="0;1;0" dur=".8s" repeatCount="indefinite"/></rect>
+  <rect x="46" y="50" width="6" height="3" rx="1" fill="#f00"><animate attributeName="opacity" values="1;0;1" dur="1.2s" repeatCount="indefinite"/></rect>
+  <rect x="12" y="50" width="10" height="5" rx="2" fill="#777" stroke="#000" stroke-width="1.5"/>
+  <rect x="58" y="50" width="10" height="5" rx="2" fill="#777" stroke="#000" stroke-width="1.5"/>
+  <rect x="28" y="73" width="10" height="16" rx="2" fill="#666" stroke="#000" stroke-width="2"/>
+  <rect x="42" y="73" width="10" height="16" rx="2" fill="#666" stroke="#000" stroke-width="2"/>
+  <rect x="25" y="87" width="14" height="6" rx="2" fill="#555" stroke="#000" stroke-width="1.5"/>
+  <rect x="40" y="87" width="14" height="6" rx="2" fill="#555" stroke="#000" stroke-width="1.5"/>
+ </svg>`;
 
-// Binance prices
-const btcEl = document.getElementById('btcPrice');
-const ethEl = document.getElementById('ethPrice');
-async function fetchPrices() {
-  try {
-    const r = await fetch('https://api.binance.com/api/v3/ticker/price?symbols=["BTCUSDT","ETHUSDT"]');
-    const d = await r.json();
-    const m = {};
-    d.forEach(t => m[t.symbol] = parseFloat(t.price));
-    if (m.BTCUSDT) {
-      btcEl.textContent = 'BTC $' + Math.round(m.BTCUSDT).toLocaleString();
-    }
-    if (m.ETHUSDT) {
-      ethEl.textContent = 'ETH $' + Math.round(m.ETHUSDT).toLocaleString();
-    }
-  } catch(e) {
-    btcEl.textContent = 'BTC $---';
-    ethEl.textContent = 'ETH $---';
-  }
+ const skin=c.colors.skin||'#fdd';
+ const hair=c.colors.hair||'#654321';
+ let headExtra='';
+ let bodyFill=c.colors.hoodie||c.colors.top||'#666';
+
+ // Character-specific details
+ if(c.id==='alf'){
+  headExtra=`<ellipse cx="40" cy="12" rx="18" ry="8" fill="${hair}" stroke="#000" stroke-width="1"/>
+   <path d="M22 20 Q18 18 16 22 Q14 26 18 25" fill="${hair}" stroke="#000" stroke-width="1"/>
+   <path d="M58 20 Q62 18 64 22 Q66 26 62 25" fill="${hair}" stroke="#000" stroke-width="1"/>
+   <rect x="14" y="18" width="8" height="4" rx="2" fill="#555" stroke="#000" stroke-width="1"/>
+   <rect x="58" y="18" width="8" height="4" rx="2" fill="#555" stroke="#000" stroke-width="1"/>
+   <path d="M14 20 Q10 14 14 18" stroke="#555" stroke-width="2" fill="none"/>
+   <path d="M66 20 Q70 14 66 18" stroke="#555" stroke-width="2" fill="none"/>`;
+ }
+ if(c.id==='nova'){
+  headExtra=`<ellipse cx="40" cy="10" rx="16" ry="7" fill="${c.colors.extra}"/>
+   <rect x="26" y="8" width="28" height="5" rx="2" fill="${c.colors.extra}" stroke="#000" stroke-width="1"/>
+   <rect x="29" y="24" width="9" height="7" rx="3" fill="none" stroke="#333" stroke-width="1.5"/>
+   <rect x="42" y="24" width="9" height="7" rx="3" fill="none" stroke="#333" stroke-width="1.5"/>
+   <line x1="38" y1="27" x2="42" y2="27" stroke="#333" stroke-width="1"/>`;
+ }
+ if(c.id==='satoshi'){
+  headExtra=`<path d="M22 16 Q22 6 40 6 Q58 6 58 16" fill="${hair}" stroke="#000" stroke-width="1"/>
+   <path d="M24 14 L24 20" stroke="${hair}" stroke-width="3"/>
+   <path d="M56 14 L56 20" stroke="${hair}" stroke-width="3"/>`;
+ }
+ if(c.id==='orakl'){
+  headExtra=`<path d="M22 14 Q22 4 40 4 Q58 4 58 14" fill="#ddd" stroke="#000" stroke-width="1"/>
+   <path d="M20 38 Q10 42 14 50 L22 44Z" fill="${c.colors.extra}" stroke="#000" stroke-width="1.5"/>
+   <path d="M60 38 Q70 42 66 50 L58 44Z" fill="${c.colors.extra}" stroke="#000" stroke-width="1.5"/>`;
+ }
+ if(c.id==='rita'){
+  headExtra=`<path d="M40 8 Q55 8 58 14 L60 10 Q58 4 40 6" fill="${hair}" stroke="#000" stroke-width="1"/>
+   <path d="M40 8 Q25 8 22 14" fill="${hair}" stroke="#000" stroke-width="1"/>
+   <path d="M58 14 Q62 20 60 30 Q58 22 56 18" fill="${hair}" stroke="#000" stroke-width="1"/>`;
+ }
+ if(c.id==='hedge'){
+  headExtra=`<path d="M24 16 Q24 8 40 8 Q56 8 56 16" fill="${hair}" stroke="#000" stroke-width="1"/>`;
+ }
+
+ return `<svg viewBox="0 0 80 100" class="char-svg">
+  <!-- Head -->
+  <circle cx="40" cy="24" r="18" fill="${skin}" stroke="#000" stroke-width="2.5"/>
+  ${headExtra}
+  <!-- Eyes -->
+  <ellipse cx="33" cy="24" rx="5" ry="6" fill="#fff" stroke="#000" stroke-width="1.5"/>
+  <ellipse cx="47" cy="24" rx="5" ry="6" fill="#fff" stroke="#000" stroke-width="1.5"/>
+  <circle cx="34" cy="24" r="2.5" fill="#111"/>
+  <circle cx="48" cy="24" r="2.5" fill="#111"/>
+  <!-- Mouth -->
+  <path d="M35 33 Q40 36 45 33" stroke="#000" stroke-width="1.5" fill="none"/>
+  <!-- Body -->
+  <ellipse cx="40" cy="58" rx="18" ry="20" fill="${bodyFill}" stroke="#000" stroke-width="2.5"/>
+  <!-- Arms -->
+  <path d="M22 52 Q12 58 16 66" stroke="#000" stroke-width="2.5" fill="${bodyFill}"/>
+  <path d="M58 52 Q68 58 64 66" stroke="#000" stroke-width="2.5" fill="${bodyFill}"/>
+  <circle cx="16" cy="66" r="4" fill="${skin}" stroke="#000" stroke-width="1.5"/>
+  <circle cx="64" cy="66" r="4" fill="${skin}" stroke="#000" stroke-width="1.5"/>
+  <!-- Legs -->
+  <rect x="30" y="75" width="8" height="14" rx="3" fill="#2d2d44" stroke="#000" stroke-width="2"/>
+  <rect x="42" y="75" width="8" height="14" rx="3" fill="#2d2d44" stroke="#000" stroke-width="2"/>
+  <!-- Shoes -->
+  <ellipse cx="34" cy="90" rx="7" ry="4" fill="#333" stroke="#000" stroke-width="1.5"/>
+  <ellipse cx="46" cy="90" rx="7" ry="4" fill="#333" stroke="#000" stroke-width="1.5"/>
+ </svg>`;
 }
-fetchPrices();
-setInterval(fetchPrices, 10000);
+
+// Monitor content (drawn on canvas)
+function drawMonitor(canvas, type){
+ const ctx=canvas.getContext('2d');
+ const w=canvas.width=70,h=canvas.height=44;
+ ctx.fillStyle='#0a0a1a';ctx.fillRect(0,0,w,h);
+
+ if(type==='candles'){
+  const colors=['#4ade80','#ef4444','#4ade80','#4ade80','#ef4444','#4ade80','#ef4444'];
+  colors.forEach((c,i)=>{ctx.fillStyle=c;const bh=8+Math.random()*20;ctx.fillRect(4+i*9,h-bh-4,6,bh);
+   ctx.fillRect(6+i*9,h-bh-8,2,4)})
+ } else if(type==='news'){
+  ctx.fillStyle='#4a9eff';
+  for(let i=0;i<5;i++){ctx.fillRect(4,4+i*8,50+Math.random()*14,4)}
+ } else if(type==='blockchain'){
+  ctx.fillStyle='#f7c948';ctx.font='6px monospace';
+  ctx.fillText('0xd3aD...b33F',4,12);ctx.fillText('→ 50.2 BTC',4,22);
+  ctx.fillStyle='#4ade80';ctx.fillText('CONFIRMED',4,32)
+ } else if(type==='fear'){
+  ctx.beginPath();ctx.arc(35,28,16,Math.PI,0);ctx.strokeStyle='#ef4444';ctx.lineWidth=3;ctx.stroke();
+  ctx.beginPath();ctx.arc(35,28,16,Math.PI,Math.PI+Math.PI*.6);ctx.strokeStyle='#4ade80';ctx.lineWidth=3;ctx.stroke();
+  ctx.fillStyle='#f7c948';ctx.font='bold 8px sans-serif';ctx.fillText('62',30,26);
+  ctx.fillStyle='#fff';ctx.font='5px sans-serif';ctx.fillText('Greed',28,38)
+ } else if(type==='orderbook'){
+  for(let i=0;i<5;i++){ctx.fillStyle='#4ade80';ctx.fillRect(4,4+i*8,20+Math.random()*15,5);
+   ctx.fillStyle='#ef4444';ctx.fillRect(38,4+i*8,20+Math.random()*15,5)}
+ } else if(type==='portfolio'){
+  const cols=['#4ade80','#f7c948','#ec4899','#4a9eff'];
+  let a=-Math.PI/2;
+  cols.forEach(c=>{ctx.beginPath();ctx.moveTo(35,22);const s=Math.PI*.4+Math.random()*.3;
+   ctx.arc(35,22,16,a,a+s);ctx.fillStyle=c;ctx.fill();a+=s})
+ } else if(type==='algo'){
+  ctx.fillStyle='#0f0';ctx.font='5px monospace';
+  const lines=['> scanning...','> RSI=42.3','> SIGNAL: BUY','> exec_trade()','> profit: +2.1%'];
+  lines.forEach((l,i)=>ctx.fillText(l,3,8+i*7))
+ }
+}
+
+// Desk item SVGs
+function deskItemSVG(type){
+ if(type==='energy') return '<svg viewBox="0 0 16 20" width="14" height="18"><rect x="3" y="2" width="10" height="16" rx="2" fill="#4ade80" stroke="#000" stroke-width="1"/><text x="8" y="13" font-size="6" fill="#000" text-anchor="middle" font-weight="bold">⚡</text></svg>';
+ if(type==='coffee') return '<svg viewBox="0 0 16 20" width="14" height="18"><rect x="3" y="6" width="10" height="12" rx="1" fill="#fff" stroke="#000" stroke-width="1"/><path d="M13 9 Q17 9 17 13 Q17 17 13 17" fill="none" stroke="#000" stroke-width="1"/><path d="M5 4 Q6 1 7 4" stroke="#999" stroke-width=".8" fill="none"/><path d="M9 3 Q10 0 11 3" stroke="#999" stroke-width=".8" fill="none"/></svg>';
+ if(type==='wallet') return '<svg viewBox="0 0 20 16" width="18" height="14"><rect x="1" y="2" width="18" height="12" rx="2" fill="#333" stroke="#f7c948" stroke-width="1"/><circle cx="15" cy="8" r="2" fill="#f7c948"/><text x="7" y="10" font-size="5" fill="#f7c948">₿</text></svg>';
+ if(type==='crystal') return '<svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="8" fill="rgba(168,85,247,.4)" stroke="#a855f7" stroke-width="1.5"/><circle cx="10" cy="10" r="4" fill="rgba(168,85,247,.6)"><animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/></circle></svg>';
+ if(type==='stressball') return '<svg viewBox="0 0 16 16" width="14" height="14"><circle cx="8" cy="8" r="6" fill="#ec4899" stroke="#000" stroke-width="1"/><circle cx="6" cy="7" r="1" fill="#000"/><circle cx="10" cy="7" r="1" fill="#000"/><path d="M6 10 Q8 12 10 10" stroke="#000" stroke-width=".8" fill="none"/></svg>';
+ if(type==='rubik') return '<svg viewBox="0 0 18 18" width="14" height="14"><rect x="1" y="1" width="16" height="16" rx="1" fill="#333" stroke="#000" stroke-width="1"/><rect x="2" y="2" width="4.5" height="4.5" fill="#ef4444" rx=".5"/><rect x="7" y="2" width="4.5" height="4.5" fill="#fff" rx=".5"/><rect x="12" y="2" width="4.5" height="4.5" fill="#4ade80" rx=".5"/><rect x="2" y="7" width="4.5" height="4.5" fill="#f7c948" rx=".5"/><rect x="7" y="7" width="4.5" height="4.5" fill="#4a9eff" rx=".5"/><rect x="12" y="7" width="4.5" height="4.5" fill="#ec4899" rx=".5"/><rect x="2" y="12" width="4.5" height="4.5" fill="#4a9eff" rx=".5"/><rect x="7" y="12" width="4.5" height="4.5" fill="#ef4444" rx=".5"/><rect x="12" y="12" width="4.5" height="4.5" fill="#f7c948" rx=".5"/></svg>';
+ if(type==='leds') return '<svg viewBox="0 0 20 12" width="18" height="12"><rect x="1" y="2" width="18" height="8" rx="2" fill="#222" stroke="#555" stroke-width="1"/><circle cx="5" cy="6" r="2" fill="#0f0"><animate attributeName="opacity" values="1;.2;1" dur=".6s" repeatCount="indefinite"/></circle><circle cx="10" cy="6" r="2" fill="#f00"><animate attributeName="opacity" values=".2;1;.2" dur=".8s" repeatCount="indefinite"/></circle><circle cx="15" cy="6" r="2" fill="#4a9eff"><animate attributeName="opacity" values="1;.2;1" dur="1s" repeatCount="indefinite"/></circle></svg>';
+ return '';
+}
+
+const monitorTypes={alf:'candles',nova:'news',satoshi:'blockchain',orakl:'fear',rita:'orderbook',hedge:'portfolio',bot9000:'algo'};
+const deskItems={alf:'energy',nova:'coffee',satoshi:'wallet',orakl:'crystal',rita:'stressball',hedge:'rubik',bot9000:'leds'};
+
+// Build workstations
+function buildGrid(){
+ const ag=document.getElementById('analystsGrid');
+ const tg=document.getElementById('tradersGrid');
+ chars.forEach(c=>{
+  const ws=document.createElement('div');
+  ws.className='workstation';
+  ws.onclick=()=>showPopup(c);
+  ws.innerHTML=`
+   <div class="speech-bubble" id="bubble-${c.id}"></div>
+   ${charSVG(c)}
+   <canvas class="monitor" id="mon-${c.id}"></canvas>
+   <div class="desk-surface"></div>
+   <div style="margin-top:2px">${deskItemSVG(deskItems[c.id])}</div>
+   <div class="char-name">${c.name}</div>
+   <div class="char-role">${c.role}</div>
+   <div class="char-status">● ${c.status}</div>`;
+  (c.division==='analyst'?ag:tg).appendChild(ws);
+  setTimeout(()=>drawMonitor(document.getElementById('mon-'+c.id),monitorTypes[c.id]),100);
+ });
+}
+
+// Speech bubbles
+function rotateBubbles(){
+ chars.forEach(c=>{
+  const el=document.getElementById('bubble-'+c.id);
+  if(!el)return;
+  if(Math.random()>.5){
+   el.textContent=c.bubbles[Math.floor(Math.random()*c.bubbles.length)];
+   el.classList.add('show');
+   setTimeout(()=>el.classList.remove('show'),3000);
+  }
+ });
+}
+
+// Popup
+function showPopup(c){
+ document.getElementById('popupName').textContent=c.name;
+ document.getElementById('popupRole').textContent=c.role;
+ document.getElementById('popupStrategy').textContent=c.strategy;
+ document.getElementById('popup').classList.add('show');
+}
+function closePopup(){document.getElementById('popup').classList.remove('show')}
+
+// Clock
+function tickClock(){
+ const d=new Date();
+ document.getElementById('clock').textContent=d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// BTC price
+async function fetchBTC(){
+ try{
+  const r=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+  const d=await r.json();
+  document.getElementById('btcPrice').textContent='$'+parseFloat(d.price).toLocaleString('en',{maximumFractionDigits:0});
+ }catch(e){document.getElementById('btcPrice').textContent='N/A'}
+}
+
+// Refresh monitors periodically
+function refreshMonitors(){
+ chars.forEach(c=>{
+  const canvas=document.getElementById('mon-'+c.id);
+  if(canvas)drawMonitor(canvas,monitorTypes[c.id]);
+ });
+}
+
+// Init
+buildGrid();
+tickClock();setInterval(tickClock,1000);
+fetchBTC();setInterval(fetchBTC,30000);
+setInterval(rotateBubbles,5000);
+setInterval(refreshMonitors,8000);
 </script>
 </body>
 </html>
