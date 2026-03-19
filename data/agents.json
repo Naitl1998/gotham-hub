@@ -81,16 +81,17 @@
       "name": "Хедж",
       "role": "Консервативный трейдер",
       "enabled": true,
-      "status": "idle",
-      "lastRun": null,
-      "signal": null,
+      "status": "done",
+      "lastRun": "2026-03-19T15:54:00.000Z",
+      "signal": "HOLD",
       "strategy": "conservative",
       "balance": 10000,
       "trades": 0,
       "wins": 0,
       "losses": 0,
       "pnl": 0,
-      "openPositions": []
+      "openPositions": [],
+      "analysis": "Сигналы: Альф — SELL, Нова — HOLD, Сатоши — HOLD, Оракл — BUY. Консенсус 3+ отсутствует — не открываю позицию. Жду единогласия."
     },
     "bot9000": {
       "name": "Бот-9000",
