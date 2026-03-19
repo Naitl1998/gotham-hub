@@ -2,465 +2,329 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>Команда — GOTHAM3032 HQ</title>
+<title>Gotham3032 AI Office</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100vw;height:100vh;overflow:hidden;font-family:'Inter',sans-serif;background:#87CEEB}
-#scene{position:relative;width:100vw;height:100vh;overflow:hidden}
+:root{
+--wall:#4a3728;--floor1:#d4b896;--floor2:#c9a882;--desk:#e8e8e8;--monitor:#222;
+--sidebar:#1a1a2e;--sidebar2:#16213e;--accent:#00d4ff;--green:#00ff88;
+}
+body{font-family:'Press Start 2P',monospace;background:#0a0a1a;color:#fff;overflow:hidden;height:100vh;display:flex;flex-direction:column;image-rendering:pixelated}
+#app{display:flex;flex:1;overflow:hidden}
+#office-wrap{flex:1;min-width:0;position:relative;overflow:hidden;background:#2a1f14}
+#office{width:100%;height:100%;position:relative}
+#sidebar{width:280px;min-width:280px;background:var(--sidebar);display:flex;flex-direction:column;border-left:3px solid #0f3460;overflow-y:auto}
+#sidebar::-webkit-scrollbar{width:4px}
+#sidebar::-webkit-scrollbar-thumb{background:#0f3460}
+#statusbar{height:32px;min-height:32px;background:#0f0f23;display:flex;align-items:center;justify-content:center;font-size:8px;color:#888;border-top:2px solid #1a1a3e;gap:16px}
+.sb-header{padding:12px;text-align:center;border-bottom:2px solid #0f3460}
+.sb-title{font-size:9px;color:var(--accent);margin-bottom:8px}
+.sb-stats{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.sb-stat{background:#0f3460;padding:4px 8px;font-size:7px;color:#aaa}
+.sb-btc{padding:8px 12px;text-align:center;font-size:8px;color:#f7931a;border-bottom:2px solid #0f3460;background:#0d1b2a}
+.agent-list{flex:1;padding:8px}
+.agent-card{display:flex;gap:8px;padding:8px;margin-bottom:6px;background:#0d1b2a;cursor:pointer;border:2px solid transparent;transition:border-color .2s}
+.agent-card:hover,.agent-card.active{border-color:var(--accent)}
+.agent-avatar{width:32px;height:32px;min-width:32px;position:relative}
+.agent-info{flex:1;min-width:0}
+.agent-name{font-size:8px;color:#fff;display:flex;align-items:center;gap:4px}
+.agent-name .dot{width:6px;height:6px;background:var(--green);display:inline-block;animation:pulse-dot 2s infinite}
+.agent-role{font-size:7px;color:#888;margin-top:2px}
+.agent-task{font-size:6px;color:#555;margin-top:2px}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
+@keyframes flicker{0%,100%{opacity:.9}50%{opacity:1}}
+@keyframes glow-pulse{0%,100%{opacity:.3}50%{opacity:.6}}
+@keyframes highlight-pulse{0%,100%{box-shadow:0 0 8px 2px var(--accent)}50%{box-shadow:0 0 16px 6px var(--accent)}}
 
-/* Sky / outside */
-.sky{position:absolute;top:0;left:0;width:100%;height:45vh;background:linear-gradient(180deg,#87CEEB 0%,#B0E0FF 100%)}
-.cloud{position:absolute;background:#fff;border-radius:50%;opacity:.9}
-.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
-.c1{width:8vw;height:3vh;top:8vh;left:5vw;animation:drift 30s linear infinite}
-.c1::before{width:5vw;height:2.5vh;top:-1.5vh;left:1.5vw}
-.c1::after{width:4vw;height:2vh;top:-1vh;left:4vw}
-.c2{width:6vw;height:2.5vh;top:5vh;left:25vw;animation:drift 40s linear infinite 5s}
-.c2::before{width:4vw;height:2vh;top:-1.2vh;left:1vw}
-.c2::after{width:3vw;height:1.5vh;top:-.8vh;left:3vw}
-.c3{width:7vw;height:2.8vh;top:12vh;left:60vw;animation:drift 35s linear infinite 10s}
-.c3::before{width:5vw;height:2.2vh;top:-1.3vh;left:1vw}
-.c3::after{width:3.5vw;height:1.8vh;top:-1vh;left:3.5vw}
-@keyframes drift{0%{transform:translateX(0)}100%{transform:translateX(100vw)}}
+/* Office Canvas */
+.floor{position:absolute;inset:0;display:grid;grid-template-columns:repeat(20,1fr);grid-template-rows:repeat(14,1fr)}
+.tile{border:1px solid rgba(0,0,0,.05)}
+.tile:nth-child(odd){background:var(--floor1)}
+.tile:nth-child(even){background:var(--floor2)}
+.wall{position:absolute;top:0;left:0;right:0;height:50px;background:var(--wall);border-bottom:4px solid #3a2a1a;z-index:2}
+.wall-detail{position:absolute;display:flex;align-items:center;justify-content:center}
 
-/* Room structure */
-.ceiling{position:absolute;top:18vh;left:8vw;width:84vw;height:2.5vh;background:#8B7355;border:2px solid #333;z-index:2}
-.wall{position:absolute;top:20vh;left:8vw;width:84vw;height:58vh;background:#F5E6CA;border-left:3px solid #333;border-right:3px solid #333;z-index:1}
-.floor{position:absolute;bottom:0;left:0;width:100vw;height:22vh;background:#8B7355;border-top:3px solid #333;z-index:2}
-.floor-tile{position:absolute;top:20.5vh;left:8vw;width:84vw;height:2vh;background:#A0896C;z-index:3}
-.baseboard{position:absolute;top:76vh;left:8vw;width:84vw;height:1.5vh;background:#6B5B3E;border:1px solid #333;z-index:3}
-
-/* Window */
-.window{position:absolute;top:26vh;left:12vw;width:14vw;height:16vh;background:#B0E0FF;border:3px solid #333;z-index:2}
-.window-cross-h{position:absolute;top:50%;left:0;width:100%;height:3px;background:#333;transform:translateY(-50%)}
-.window-cross-v{position:absolute;top:0;left:50%;width:3px;height:100%;background:#333;transform:translateX(-50%)}
-.window-sill{position:absolute;top:42vh;left:11vw;width:16vw;height:1.5vh;background:#8B7355;border:2px solid #333;z-index:2}
-
-/* Door */
-.door{position:absolute;top:50vh;right:10vw;width:8vw;height:27.5vh;background:#A0522D;border:3px solid #333;border-bottom:none;z-index:2;border-radius:1vh 1vh 0 0}
-.door-knob{position:absolute;top:55%;left:15%;width:1.2vw;height:1.2vw;background:#DAA520;border:2px solid #333;border-radius:50%}
-
-/* Wall decorations */
-.poster{position:absolute;top:28vh;left:42vw;width:14vw;height:8vh;background:#1a1a2e;border:3px solid #333;z-index:2;display:flex;align-items:center;justify-content:center;flex-direction:column}
-.poster-text{color:#FFD700;font-size:1.4vh;font-weight:700;text-align:center;line-height:1.3}
-
-.whiteboard{position:absolute;top:26vh;left:58vw;width:16vw;height:12vh;background:#fff;border:3px solid #333;z-index:2;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:.5vh}
-.wb-title{font-size:1.3vh;font-weight:700;color:#333}
-.wb-price{font-size:2vh;font-weight:700;color:#F7931A;margin-top:.3vh}
-.wb-label{font-size:1vh;color:#666;margin-top:.2vh}
-
-.clock{position:absolute;top:28vh;left:34vw;width:5vw;height:5vw;max-width:5vh;max-height:5vh;background:#fff;border:3px solid #333;border-radius:50%;z-index:2}
-.clock-center{position:absolute;top:50%;left:50%;width:.6vh;height:.6vh;background:#333;border-radius:50%;transform:translate(-50%,-50%);z-index:4}
-.hand-h{position:absolute;bottom:50%;left:50%;width:2px;height:30%;background:#333;transform-origin:bottom center;z-index:3}
-.hand-m{position:absolute;bottom:50%;left:50%;width:1.5px;height:40%;background:#333;transform-origin:bottom center;z-index:3}
-
-/* Zone labels */
-.zone-label{position:absolute;top:22vh;font-size:1.2vh;font-weight:700;color:#555;letter-spacing:.1vw;z-index:3}
-.zone-left{left:14vw}
-.zone-right{left:60vw}
-
-/* Boss TV */
-.boss-tv{position:absolute;top:25vh;left:76vw;width:14vw;height:10vh;background:#111;border:3px solid #333;border-radius:.5vh;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.5vh}
-.boss-tv::after{content:'';position:absolute;bottom:-2vh;left:50%;transform:translateX(-50%);width:4vw;height:2vh;background:#333;clip-path:polygon(20% 0,80% 0,100% 100%,0 100%)}
-.tv-name{color:#FFD700;font-size:1.3vh;font-weight:700}
-.tv-stats{color:#0f0;font-size:1vh;margin-top:.3vh;text-align:center;line-height:1.4}
+/* Wall elements */
+.window{position:absolute;top:8px;width:50px;height:34px;background:#87ceeb;border:3px solid #5a4a3a;z-index:3}
+.window::before,.window::after{content:'';position:absolute;top:0;width:10px;height:100%;background:#3366aa}
+.window::before{left:-2px}
+.window::after{right:-2px}
+.window-cross{position:absolute;top:50%;left:0;right:0;height:2px;background:#5a4a3a;z-index:4}
+.window-crossv{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#5a4a3a;z-index:4}
+.bookshelf{position:absolute;top:6px;width:60px;height:38px;background:#5a3a1a;border:2px solid #3a2a0a;z-index:3;display:flex;flex-wrap:wrap;gap:1px;padding:2px;align-content:flex-start}
+.book{width:5px;height:16px}
+.poster{position:absolute;top:10px;width:24px;height:30px;border:2px solid #8a7a5a;z-index:3}
 
 /* Furniture */
-.fridge{position:absolute;bottom:22vh;left:9.5vw;width:5vw;height:14vh;background:#D0D0D0;border:3px solid #333;border-radius:.5vh .5vh 0 0;z-index:3}
-.fridge-line{position:absolute;top:45%;left:10%;width:80%;height:2px;background:#333}
-.fridge-handle{position:absolute;top:20%;right:15%;width:.6vw;height:2vh;background:#999;border:1px solid #333;border-radius:1px}
+.desk{position:absolute;width:56px;height:36px;background:var(--desk);border:2px solid #ccc;z-index:5;cursor:pointer}
+.desk .monitor{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:22px;height:12px;background:var(--monitor);border:1px solid #444;animation:flicker 3s infinite}
+.desk .monitor-screen{position:absolute;top:1px;left:1px;right:1px;bottom:1px;background:#1a3a2a}
+.character{position:absolute;z-index:6;cursor:pointer;animation:idle 3s ease-in-out infinite}
+.char-head{width:16px;height:16px;border-radius:50%;position:relative;margin:0 auto}
+.char-body{width:12px;height:8px;margin:0 auto;margin-top:-1px}
+.char-hat{position:absolute;top:-3px;left:50%;transform:translateX(-50%);height:5px}
+.nametag{position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:6px;color:#fff;background:rgba(0,0,0,.7);padding:1px 3px;margin-top:2px;z-index:7}
+.team-label{position:absolute;font-size:8px;color:#fff;background:rgba(0,0,0,.6);padding:3px 8px;z-index:10;white-space:nowrap}
 
-.coffee{position:absolute;bottom:22vh;left:15.5vw;width:3.5vw;height:6vh;background:#2C2C2C;border:2px solid #333;border-radius:.3vh .3vh 0 0;z-index:3}
-.coffee-top{position:absolute;top:-.8vh;left:15%;width:70%;height:1vh;background:#444;border:2px solid #333;border-radius:.3vh}
-.steam{position:absolute;top:-2.5vh;width:.4vw;height:2vh;background:transparent;z-index:4}
-.s1{left:25%;animation:steam 2s ease-in-out infinite}
-.s2{left:55%;animation:steam 2s ease-in-out infinite .7s}
-@keyframes steam{0%{box-shadow:0 0 .5vh .2vh rgba(255,255,255,0)}25%{box-shadow:0 0 .5vh .2vh rgba(255,255,255,.4)}50%{box-shadow:0 -.5vh .5vh .2vh rgba(255,255,255,.2);transform:translateX(.2vw)}100%{box-shadow:0 -1vh .5vh .2vh rgba(255,255,255,0);transform:translateY(-1vh)}}
+/* Furniture items */
+.plant{position:absolute;width:16px;height:16px;z-index:4}
+.plant-pot{width:12px;height:8px;background:#8b4513;margin:0 auto;margin-top:8px}
+.plant-top{width:16px;height:12px;background:#228b22;border-radius:50%;margin:0 auto}
+.lamp{position:absolute;width:14px;height:14px;z-index:4}
+.lamp-base{width:14px;height:14px;background:#daa520;border-radius:50%;position:relative}
+.lamp-glow{position:absolute;inset:-8px;background:radial-gradient(circle,rgba(255,220,100,.3),transparent);border-radius:50%;animation:glow-pulse 4s infinite}
+.water-cooler{position:absolute;width:14px;height:20px;background:#b0c4de;border:2px solid #888;z-index:4}
+.water-cooler::before{content:'';position:absolute;top:-4px;left:2px;width:8px;height:6px;background:#4a90d9;border:1px solid #3a70a9}
+.sofa{position:absolute;width:50px;height:22px;background:#8b4555;border:2px solid #6a3040;z-index:4}
+.coffee-table{position:absolute;width:28px;height:16px;background:#6a4a2a;border:2px solid #4a3a1a;z-index:4}
+.whiteboard{position:absolute;width:70px;height:40px;background:#f0f0f0;border:3px solid #888;z-index:3}
+.wb-text{font-size:6px;color:#333;padding:3px;text-align:center}
+.wb-btc{font-size:7px;color:#f7931a;font-weight:bold}
 
-.cooler{position:absolute;bottom:22vh;right:19vw;width:3vw;height:8vh;background:#ADD8E6;border:2px solid #333;border-radius:.3vh;z-index:3}
-.cooler-bottle{position:absolute;top:-3vh;left:15%;width:70%;height:3.5vh;background:#89CFF0;border:2px solid #333;border-radius:50% 50% 0 0}
-.cooler-tap{position:absolute;top:40%;left:-5%;width:1vw;height:1vh;background:#999;border:1px solid #333}
+/* Popup */
+.popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center}
+.popup-overlay.show{display:flex}
+.popup{background:#1a1a2e;border:3px solid var(--accent);padding:16px;min-width:220px;max-width:280px}
+.popup-close{float:right;cursor:pointer;color:var(--accent);font-size:10px}
+.popup h3{font-size:10px;color:var(--accent);margin-bottom:8px}
+.popup p{font-size:7px;color:#aaa;margin-bottom:4px}
+.popup .stat-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #0f3460}
+.popup .stat-val{color:var(--green)}
 
-.plant{position:absolute;bottom:22vh;right:11vw;z-index:3}
-.plant-pot{width:3vw;height:3vh;background:#A0522D;border:2px solid #333;clip-path:polygon(10% 0,90% 0,80% 100%,20% 100%)}
-.plant-leaves{position:absolute;bottom:2.5vh;left:50%;transform:translateX(-50%)}
-.leaf{position:absolute;width:1.5vw;height:3vh;background:#228B22;border:2px solid #333;border-radius:50%}
-.leaf:nth-child(1){transform:rotate(-30deg);left:-1.2vw}
-.leaf:nth-child(2){transform:rotate(0deg);left:-.4vw;bottom:.5vh}
-.leaf:nth-child(3){transform:rotate(30deg);left:.5vw}
+.desk.highlighted{animation:highlight-pulse 1s infinite}
 
-/* Desk */
-.desk{position:absolute;width:9vw;height:3.5vh;background:#8B6914;border:2px solid #333;z-index:4}
-.desk-leg-l,.desk-leg-r{position:absolute;bottom:-3vh;width:.8vw;height:3vh;background:#7A5C12;border:1px solid #333}
-.desk-leg-l{left:.5vw}
-.desk-leg-r{right:.5vw}
-.monitor{position:absolute;top:-4vh;left:50%;transform:translateX(-50%);width:4vw;height:3vh;background:#222;border:2px solid #333;border-radius:.3vh;z-index:5}
-.monitor-screen{position:absolute;top:10%;left:8%;width:84%;height:70%;border-radius:.15vh;animation:flicker 3s ease-in-out infinite}
-@keyframes flicker{0%,100%{opacity:1}50%{opacity:.85}52%{opacity:1}}
-.monitor-stand{position:absolute;bottom:-1vh;left:50%;transform:translateX(-50%);width:1.5vw;height:1vh;background:#333;clip-path:polygon(30% 0,70% 0,100% 100%,0 100%)}
-
-/* Character base */
-.char{position:absolute;z-index:6;cursor:pointer;animation:bob 2s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-
-/* Speech bubble */
-.bubble{position:absolute;top:-4vh;left:50%;transform:translateX(-50%);background:#fff;border:2px solid #333;border-radius:1vh;padding:.3vh .6vw;font-size:1vh;white-space:nowrap;z-index:10;opacity:0;transition:opacity .3s;pointer-events:none}
-.bubble::after{content:'';position:absolute;bottom:-1vh;left:50%;transform:translateX(-50%);width:0;height:0;border-left:.5vw solid transparent;border-right:.5vw solid transparent;border-top:1vh solid #333}
-.bubble.show{opacity:1}
-
-/* Tooltip card */
-.tooltip{position:fixed;z-index:100;background:#1a1a2e;color:#fff;border:2px solid #FFD700;border-radius:1.5vh;padding:1.5vh 2vw;min-width:30vw;max-width:60vw;display:none;box-shadow:0 .5vh 2vh rgba(0,0,0,.5)}
-.tooltip.active{display:block}
-.tt-name{font-size:2vh;font-weight:700;color:#FFD700;margin-bottom:.5vh}
-.tt-role{font-size:1.4vh;color:#aaa;margin-bottom:.8vh}
-.tt-strat{font-size:1.2vh;color:#ccc;margin-bottom:.8vh;font-style:italic}
-.tt-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5vh;font-size:1.2vh}
-.tt-stat{text-align:center;padding:.4vh;background:rgba(255,255,255,.08);border-radius:.5vh}
-.tt-stat-val{font-size:1.6vh;font-weight:700;color:#0f0}
-.tt-stat-lbl{font-size:.9vh;color:#888}
-
-/* Back button */
-.back-btn{position:fixed;top:1.5vh;left:1.5vw;z-index:50;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:5vh;height:5vh;font-size:2.5vh;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.back-btn:active{background:rgba(0,0,0,.7)}
-
-/* Character SVGs inline */
-.char svg{display:block}
+@media(max-width:700px){
+  #app{flex-direction:column}
+  #sidebar{width:100%;min-width:0;max-height:40vh;border-left:none;border-top:3px solid #0f3460}
+  #office-wrap{min-height:55vh}
+}
 </style>
 </head>
 <body>
-<div id="scene">
-  <!-- Sky -->
-  <div class="sky">
-    <div class="cloud c1"></div>
-    <div class="cloud c2"></div>
-    <div class="cloud c3"></div>
+<div id="app">
+<div id="office-wrap">
+<div id="office">
+<!-- Floor tiles -->
+<div class="floor" id="floor"></div>
+<!-- Wall -->
+<div class="wall">
+  <div class="window" style="left:20px"><div class="window-cross"></div><div class="window-crossv"></div></div>
+  <div class="bookshelf" style="left:90px">
+    <div class="book" style="background:#c0392b"></div><div class="book" style="background:#2980b9"></div>
+    <div class="book" style="background:#27ae60"></div><div class="book" style="background:#f39c12"></div>
+    <div class="book" style="background:#8e44ad"></div><div class="book" style="background:#e74c3c"></div>
+    <div class="book" style="background:#3498db"></div><div class="book" style="background:#2ecc71"></div>
+    <div class="book" style="background:#e67e22"></div><div class="book" style="background:#9b59b6"></div>
   </div>
+  <div class="poster" style="left:170px;background:#2c3e50"><div style="width:8px;height:8px;background:#e74c3c;margin:6px auto"></div></div>
+  <div class="poster" style="left:210px;background:#1a5276"><div style="width:12px;height:4px;background:#f7dc6f;margin:8px auto"></div></div>
+  <div class="bookshelf" style="right:120px">
+    <div class="book" style="background:#e74c3c"></div><div class="book" style="background:#1abc9c"></div>
+    <div class="book" style="background:#f1c40f"></div><div class="book" style="background:#3498db"></div>
+    <div class="book" style="background:#e67e22"></div><div class="book" style="background:#2ecc71"></div>
+  </div>
+  <div class="window" style="right:20px"><div class="window-cross"></div><div class="window-crossv"></div></div>
+  <div class="poster" style="right:85px;background:#1c2833;width:30px"><div style="font-size:5px;color:#f7931a;text-align:center;padding-top:10px">₿</div></div>
+</div>
 
-  <!-- Room -->
-  <div class="ceiling"></div>
-  <div class="wall"></div>
-  <div class="floor"></div>
-  <div class="floor-tile"></div>
-  <div class="baseboard"></div>
+<!-- Whiteboard on wall -->
+<div class="whiteboard" style="top:54px;left:50%;transform:translateX(-50%)">
+  <div class="wb-text">📊 BTC Price</div>
+  <div class="wb-btc" id="wb-btc">Loading...</div>
+  <div class="wb-text" style="font-size:5px;color:#888">Live</div>
+</div>
 
-  <!-- Window -->
-  <div class="window">
-    <div class="window-cross-h"></div>
-    <div class="window-cross-v"></div>
-  </div>
-  <div class="window-sill"></div>
+<!-- Team Labels -->
+<div class="team-label" style="top:70px;left:16px">✅ Crypto Start Team</div>
+<div class="team-label" style="top:200px;left:16px">🔧 Trading Team</div>
 
-  <!-- Door -->
-  <div class="door">
-    <div class="door-knob"></div>
-  </div>
+<!-- Crypto Start Team desks (4) -->
+<div class="desk" id="desk-0" style="top:95px;left:20px" onclick="showPopup(0)">
+  <div class="monitor"><div class="monitor-screen"></div></div>
+</div>
+<div class="character" id="char-0" style="top:108px;left:38px" onclick="showPopup(0)">
+  <div class="char-head" style="background:#f5c6a0"><div class="char-hat" style="width:14px;background:#6a5acd;top:-5px;height:7px"></div></div>
+  <div class="char-body" style="background:#4a4aaa"></div>
+  <div class="nametag">Альф</div>
+</div>
 
-  <!-- Zone labels -->
-  <div class="zone-label zone-left">📊 АНАЛИТИКИ</div>
-  <div class="zone-label zone-right">📈 ТРЕЙДЕРЫ</div>
+<div class="desk" id="desk-1" style="top:95px;left:100px" onclick="showPopup(1)">
+  <div class="monitor"><div class="monitor-screen"></div></div>
+</div>
+<div class="character" id="char-1" style="top:108px;left:118px" onclick="showPopup(1)">
+  <div class="char-head" style="background:#f5c6a0"><div class="char-hat" style="width:16px;background:#cc2233;border-radius:50% 50% 0 0;top:-4px;height:6px"></div></div>
+  <div class="char-body" style="background:#cc4444"></div>
+  <div class="nametag">Нова</div>
+</div>
 
-  <!-- Poster -->
-  <div class="poster">
-    <div class="poster-text">⚡ GOTHAM3032 HQ ⚡<br>TO THE MOON 🚀</div>
-  </div>
+<div class="desk" id="desk-2" style="top:95px;left:180px" onclick="showPopup(2)">
+  <div class="monitor"><div class="monitor-screen"></div></div>
+</div>
+<div class="character" id="char-2" style="top:108px;left:198px" onclick="showPopup(2)">
+  <div class="char-head" style="background:#f5c6a0"><div class="char-hat" style="width:18px;background:#222;border-radius:50% 50% 30% 30%;top:-5px;height:9px"></div></div>
+  <div class="char-body" style="background:#333"></div>
+  <div class="nametag">Сатоши</div>
+</div>
 
-  <!-- Whiteboard -->
-  <div class="whiteboard">
-    <div class="wb-title">BTC/USDT</div>
-    <div class="wb-price" id="btcPrice">$--,---</div>
-    <div class="wb-label">BINANCE LIVE</div>
-  </div>
+<div class="desk" id="desk-3" style="top:95px;left:260px" onclick="showPopup(3)">
+  <div class="monitor"><div class="monitor-screen"></div></div>
+</div>
+<div class="character" id="char-3" style="top:108px;left:278px" onclick="showPopup(3)">
+  <div class="char-head" style="background:#f5c6a0"><div class="char-hat" style="width:12px;background:#8b00ff;clip-path:polygon(50% 0%,0% 100%,100% 100%);top:-7px;height:9px"></div></div>
+  <div class="char-body" style="background:#6a2c91"></div>
+  <div class="nametag">Оракл</div>
+</div>
 
-  <!-- Clock -->
-  <div class="clock">
-    <div class="hand-h" id="handH"></div>
-    <div class="hand-m" id="handM"></div>
-    <div class="clock-center"></div>
-  </div>
+<!-- Trading Team desks (3) -->
+<div class="desk" id="desk-4" style="top:225px;left:50px" onclick="showPopup(4)">
+  <div class="monitor"><div class="monitor-screen"></div></div>
+</div>
+<div class="character" id="char-4" style="top:238px;left:68px" onclick="showPopup(4)">
+  <div class="char-head" style="background:#f5c6a0"><div class="char-hat" style="width:14px;background:#ff69b4;top:-4px;height:6px"></div><div style="position:absolute;top:0;right:-4px;width:3px;height:10px;background:#ff69b4"></div></div>
+  <div class="char-body" style="background:#e75480"></div>
+  <div class="nametag">Рита</div>
+</div>
 
-  <!-- Boss TV -->
-  <div class="boss-tv">
-    <div class="tv-name">👔 Шеф Игорь</div>
-    <div class="tv-stats">Агентов: 7<br>Баланс: $70,000<br>Сделок: 0</div>
-  </div>
+<div class="desk" id="desk-5" style="top:225px;left:160px" onclick="showPopup(5)">
+  <div class="monitor"><div class="monitor-screen"></div></div>
+</div>
+<div class="character" id="char-5" style="top:238px;left:178px" onclick="showPopup(5)">
+  <div class="char-head" style="background:#f5c6a0"><div class="char-hat" style="width:14px;background:#2e8b57;top:-5px;height:7px"></div></div>
+  <div class="char-body" style="background:#3a6b4a"></div>
+  <div class="nametag">Хедж</div>
+</div>
 
-  <!-- Furniture -->
-  <div class="fridge">
-    <div class="fridge-line"></div>
-    <div class="fridge-handle"></div>
-  </div>
-  <div class="coffee">
-    <div class="coffee-top"></div>
-    <div class="steam s1"></div>
-    <div class="steam s2"></div>
-  </div>
-  <div class="cooler">
-    <div class="cooler-bottle"></div>
-    <div class="cooler-tap"></div>
-  </div>
-  <div class="plant">
-    <div class="plant-leaves">
-      <div class="leaf"></div>
-      <div class="leaf"></div>
-      <div class="leaf"></div>
+<div class="desk" id="desk-6" style="top:225px;left:270px" onclick="showPopup(6)">
+  <div class="monitor"><div class="monitor-screen"></div></div>
+</div>
+<div class="character" id="char-6" style="top:238px;left:288px" onclick="showPopup(6)">
+  <div class="char-head" style="background:#c0c0c0;border-radius:2px !important;width:14px;height:14px"><div style="position:absolute;top:-5px;left:50%;width:2px;height:5px;background:#888;transform:translateX(-50%)"></div><div style="position:absolute;top:-7px;left:50%;width:4px;height:4px;background:#ff4444;border-radius:50%;transform:translateX(-50%)"></div></div>
+  <div class="char-body" style="background:#999;width:10px"></div>
+  <div class="nametag">Бот-9000</div>
+</div>
+
+<!-- Furniture -->
+<div class="plant" style="top:60px;left:340px"><div class="plant-top"></div><div class="plant-pot"></div></div>
+<div class="plant" style="top:170px;left:10px"><div class="plant-top"></div><div class="plant-pot"></div></div>
+<div class="plant" style="top:285px;left:340px"><div class="plant-top"></div><div class="plant-pot"></div></div>
+
+<div class="lamp" style="top:170px;left:340px"><div class="lamp-base"></div><div class="lamp-glow"></div></div>
+<div class="lamp" style="top:290px;left:20px"><div class="lamp-base"></div><div class="lamp-glow"></div></div>
+
+<div class="water-cooler" style="top:170px;left:300px"></div>
+
+<div class="sofa" style="top:290px;left:200px"></div>
+<div class="coffee-table" style="top:295px;left:258px"></div>
+
+</div>
+</div>
+
+<div id="sidebar">
+  <div class="sb-header">
+    <div class="sb-title">⚡ GOTHAM3032 AI OFFICE</div>
+    <div class="sb-stats">
+      <div class="sb-stat">Агентов: 7</div>
+      <div class="sb-stat">Активных: 7</div>
+      <div class="sb-stat">Расход/день: --</div>
     </div>
-    <div class="plant-pot"></div>
   </div>
-
-  <!-- DESKS + CHARACTERS -->
-  <!-- Desk positions: left group at ~14,24,34,44vw; right group at ~56,66,76vw -->
-
-  <!-- 1. Альф -->
-  <div class="desk" style="left:13vw;top:70vh">
-    <div class="desk-leg-l"></div><div class="desk-leg-r"></div>
-    <div class="monitor"><div class="monitor-screen" style="background:#4a00e0"></div><div class="monitor-stand"></div></div>
-  </div>
-  <div class="char" id="ch1" style="left:14.5vw;top:59vh" data-name="Альф 📊" data-role="Аналитик рынков" data-strat="Фундаментальный анализ, макроэкономика" data-bal="$10,000" data-trades="0" data-win="--%" onclick="showTip(this)">
-    <div class="bubble" id="b1"></div>
-    <svg width="42" height="56" viewBox="0 0 42 56">
-      <!-- Legs -->
-      <rect x="12" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <rect x="23" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <!-- Body -->
-      <rect x="8" y="28" width="26" height="20" rx="2" fill="#7B2FBE" stroke="#000" stroke-width="2.5"/>
-      <!-- Hands -->
-      <ellipse cx="5" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <ellipse cx="37" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <!-- Head -->
-      <circle cx="21" cy="18" r="13" fill="#FDDEB5" stroke="#000" stroke-width="2.5"/>
-      <!-- Eyes -->
-      <ellipse cx="16" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <ellipse cx="26" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <circle cx="17" cy="17" r="2" fill="#000"/>
-      <circle cx="27" cy="17" r="2" fill="#000"/>
-      <!-- Mouth -->
-      <path d="M17 24 Q21 27 25 24" fill="none" stroke="#000" stroke-width="1.5"/>
-      <!-- Beanie -->
-      <ellipse cx="21" cy="8" rx="14" ry="8" fill="#4A2FBE" stroke="#000" stroke-width="2.5"/>
-      <rect x="7" y="7" width="28" height="4" rx="2" fill="#5B3FD0" stroke="#000" stroke-width="2"/>
-      <!-- Headphones -->
-      <path d="M6 15 Q6 5 21 4 Q36 5 36 15" fill="none" stroke="#333" stroke-width="3"/>
-      <rect x="3" y="13" width="5" height="6" rx="2" fill="#333" stroke="#000" stroke-width="1.5"/>
-      <rect x="34" y="13" width="5" height="6" rx="2" fill="#333" stroke="#000" stroke-width="1.5"/>
-    </svg>
-  </div>
-
-  <!-- 2. Нова -->
-  <div class="desk" style="left:23vw;top:70vh">
-    <div class="desk-leg-l"></div><div class="desk-leg-r"></div>
-    <div class="monitor"><div class="monitor-screen" style="background:#e63946"></div><div class="monitor-stand"></div></div>
-  </div>
-  <div class="char" id="ch2" style="left:24.5vw;top:59vh" data-name="Нова 📰" data-role="Новостной аналитик" data-strat="Сентимент-анализ, мониторинг новостей" data-bal="$10,000" data-trades="0" data-win="--%" onclick="showTip(this)">
-    <div class="bubble" id="b2"></div>
-    <svg width="42" height="56" viewBox="0 0 42 56">
-      <rect x="12" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <rect x="23" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <rect x="8" y="28" width="26" height="20" rx="2" fill="#E63946" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="5" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <ellipse cx="37" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <circle cx="21" cy="18" r="13" fill="#FDDEB5" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="16" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <ellipse cx="26" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <circle cx="17" cy="17" r="2" fill="#000"/>
-      <circle cx="27" cy="17" r="2" fill="#000"/>
-      <path d="M17 24 Q21 26 25 24" fill="none" stroke="#000" stroke-width="1.5"/>
-      <!-- Red beret -->
-      <ellipse cx="21" cy="7" rx="14" ry="6" fill="#C1121F" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="15" cy="5" rx="3" ry="2" fill="#C1121F" stroke="#000" stroke-width="1.5"/>
-      <!-- Glasses -->
-      <rect x="11" y="14" width="8" height="6" rx="2" fill="none" stroke="#333" stroke-width="2"/>
-      <rect x="23" y="14" width="8" height="6" rx="2" fill="none" stroke="#333" stroke-width="2"/>
-      <line x1="19" y1="17" x2="23" y2="17" stroke="#333" stroke-width="1.5"/>
-    </svg>
-  </div>
-
-  <!-- 3. Сатоши -->
-  <div class="desk" style="left:33vw;top:70vh">
-    <div class="desk-leg-l"></div><div class="desk-leg-r"></div>
-    <div class="monitor"><div class="monitor-screen" style="background:#F7931A"></div><div class="monitor-stand"></div></div>
-  </div>
-  <div class="char" id="ch3" style="left:34.5vw;top:59vh" data-name="Сатоши 🔑" data-role="Крипто-аналитик" data-strat="Ончейн-анализ, метрики сети" data-bal="$10,000" data-trades="0" data-win="--%" onclick="showTip(this)">
-    <div class="bubble" id="b3"></div>
-    <svg width="42" height="56" viewBox="0 0 42 56">
-      <rect x="12" y="46" width="7" height="8" rx="1" fill="#222" stroke="#000" stroke-width="2"/>
-      <rect x="23" y="46" width="7" height="8" rx="1" fill="#222" stroke="#000" stroke-width="2"/>
-      <rect x="8" y="28" width="26" height="20" rx="2" fill="#1a1a1a" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="5" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <ellipse cx="37" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <circle cx="21" cy="18" r="13" fill="#FDDEB5" stroke="#000" stroke-width="2.5"/>
-      <!-- Hood (like Kenny) -->
-      <path d="M6 22 Q6 2 21 1 Q36 2 36 22" fill="#1a1a1a" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="21" cy="18" rx="10" ry="10" fill="none" stroke="#1a1a1a" stroke-width="0"/>
-      <!-- Face opening in hood -->
-      <ellipse cx="21" cy="18" rx="9" ry="9" fill="#FDDEB5"/>
-      <!-- Eyes -->
-      <ellipse cx="17" cy="17" rx="3.5" ry="4" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <ellipse cx="25" cy="17" rx="3.5" ry="4" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <circle cx="18" cy="17" r="1.8" fill="#000"/>
-      <circle cx="26" cy="17" r="1.8" fill="#000"/>
-      <!-- Mouth hidden by hood -->
-      <path d="M16 23 Q21 25 26 23" fill="none" stroke="#000" stroke-width="1"/>
-      <!-- Hood drawstrings -->
-      <line x1="14" y1="26" x2="12" y2="30" stroke="#555" stroke-width="1.5"/>
-      <line x1="28" y1="26" x2="30" y2="30" stroke="#555" stroke-width="1.5"/>
-    </svg>
-  </div>
-
-  <!-- 4. Оракл -->
-  <div class="desk" style="left:43vw;top:70vh">
-    <div class="desk-leg-l"></div><div class="desk-leg-r"></div>
-    <div class="monitor"><div class="monitor-screen" style="background:#9B59B6"></div><div class="monitor-stand"></div></div>
-  </div>
-  <div class="char" id="ch4" style="left:44.5vw;top:59vh" data-name="Оракл 🔮" data-role="Предсказатель трендов" data-strat="ML-модели, паттерн-анализ" data-bal="$10,000" data-trades="0" data-win="--%" onclick="showTip(this)">
-    <div class="bubble" id="b4"></div>
-    <svg width="42" height="56" viewBox="0 0 42 56">
-      <rect x="12" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <rect x="23" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <rect x="8" y="28" width="26" height="20" rx="2" fill="#6A1B9A" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="5" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <ellipse cx="37" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <circle cx="21" cy="18" r="13" fill="#FDDEB5" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="16" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <ellipse cx="26" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <circle cx="17" cy="17" r="2" fill="#000"/>
-      <circle cx="27" cy="17" r="2" fill="#000"/>
-      <path d="M17 24 Q21 26 25 24" fill="none" stroke="#000" stroke-width="1.5"/>
-      <!-- Wizard hat -->
-      <polygon points="21,0 8,12 34,12" fill="#4A148C" stroke="#000" stroke-width="2.5"/>
-      <rect x="7" y="10" width="28" height="4" rx="1" fill="#6A1B9A" stroke="#000" stroke-width="2"/>
-      <!-- Stars on hat -->
-      <circle cx="18" cy="6" r="1" fill="#FFD700"/>
-      <circle cx="24" cy="8" r=".8" fill="#FFD700"/>
-      <circle cx="21" cy="4" r="1.2" fill="#FFD700"/>
-    </svg>
-  </div>
-
-  <!-- 5. Рита -->
-  <div class="desk" style="left:55vw;top:70vh">
-    <div class="desk-leg-l"></div><div class="desk-leg-r"></div>
-    <div class="monitor"><div class="monitor-screen" style="background:#E91E90"></div><div class="monitor-stand"></div></div>
-  </div>
-  <div class="char" id="ch5" style="left:56.5vw;top:59vh" data-name="Рита 📈" data-role="Трейдер тренда" data-strat="Следование за трендом, скользящие средние" data-bal="$10,000" data-trades="0" data-win="--%" onclick="showTip(this)">
-    <div class="bubble" id="b5"></div>
-    <svg width="42" height="56" viewBox="0 0 42 56">
-      <rect x="12" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <rect x="23" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <rect x="8" y="28" width="26" height="20" rx="2" fill="#E91E63" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="5" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <ellipse cx="37" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <circle cx="21" cy="18" r="13" fill="#FDDEB5" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="16" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <ellipse cx="26" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <circle cx="17" cy="17" r="2" fill="#000"/>
-      <circle cx="27" cy="17" r="2" fill="#000"/>
-      <path d="M17 24 Q21 27 25 24" fill="none" stroke="#000" stroke-width="1.5"/>
-      <!-- Pink beanie -->
-      <ellipse cx="21" cy="8" rx="14" ry="8" fill="#FF69B4" stroke="#000" stroke-width="2.5"/>
-      <rect x="7" y="7" width="28" height="4" rx="2" fill="#FF85C8" stroke="#000" stroke-width="2"/>
-      <!-- Ponytail -->
-      <path d="M35 8 Q42 10 40 20 Q38 25 36 22" fill="#8B4513" stroke="#000" stroke-width="2"/>
-    </svg>
-  </div>
-
-  <!-- 6. Хедж -->
-  <div class="desk" style="left:65vw;top:70vh">
-    <div class="desk-leg-l"></div><div class="desk-leg-r"></div>
-    <div class="monitor"><div class="monitor-screen" style="background:#2ECC40"></div><div class="monitor-stand"></div></div>
-  </div>
-  <div class="char" id="ch6" style="left:66.5vw;top:59vh" data-name="Хедж 🎲" data-role="Хедж-трейдер" data-strat="Хеджирование, арбитраж, риск-менеджмент" data-bal="$10,000" data-trades="0" data-win="--%" onclick="showTip(this)">
-    <div class="bubble" id="b6"></div>
-    <svg width="42" height="56" viewBox="0 0 42 56">
-      <rect x="12" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <rect x="23" y="46" width="7" height="8" rx="1" fill="#333" stroke="#000" stroke-width="2"/>
-      <rect x="8" y="28" width="26" height="20" rx="2" fill="#2D6A2D" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="5" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <ellipse cx="37" cy="38" rx="4" ry="3" fill="#FDDEB5" stroke="#000" stroke-width="2"/>
-      <circle cx="21" cy="18" r="13" fill="#FDDEB5" stroke="#000" stroke-width="2.5"/>
-      <ellipse cx="16" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <ellipse cx="26" cy="17" rx="4" ry="4.5" fill="#fff" stroke="#000" stroke-width="1.5"/>
-      <circle cx="17" cy="17" r="2" fill="#000"/>
-      <circle cx="27" cy="17" r="2" fill="#000"/>
-      <path d="M17 24 Q21 26 25 24" fill="none" stroke="#000" stroke-width="1.5"/>
-      <!-- Ushanka -->
-      <ellipse cx="21" cy="8" rx="15" ry="8" fill="#3B8B3B" stroke="#000" stroke-width="2.5"/>
-      <rect x="5" y="8" width="8" height="8" rx="2" fill="#4CAF50" stroke="#000" stroke-width="2"/>
-      <rect x="29" y="8" width="8" height="8" rx="2" fill="#4CAF50" stroke="#000" stroke-width="2"/>
-      <!-- Ushanka top -->
-      <circle cx="21" cy="2" r="2.5" fill="#3B8B3B" stroke="#000" stroke-width="1.5"/>
-    </svg>
-  </div>
-
-  <!-- 7. Бот-9000 -->
-  <div class="desk" style="left:75vw;top:70vh">
-    <div class="desk-leg-l"></div><div class="desk-leg-r"></div>
-    <div class="monitor"><div class="monitor-screen" style="background:#00FFAA"></div><div class="monitor-stand"></div></div>
-  </div>
-  <div class="char" id="ch7" style="left:76.5vw;top:59vh" data-name="Бот-9000 🤖" data-role="Робот-трейдер" data-strat="Алгоритмическая торговля, HFT" data-bal="$10,000" data-trades="0" data-win="--%" onclick="showTip(this)">
-    <div class="bubble" id="b7"></div>
-    <svg width="42" height="56" viewBox="0 0 42 56">
-      <rect x="12" y="46" width="7" height="8" rx="1" fill="#666" stroke="#000" stroke-width="2"/>
-      <rect x="23" y="46" width="7" height="8" rx="1" fill="#666" stroke="#000" stroke-width="2"/>
-      <rect x="8" y="28" width="26" height="20" rx="2" fill="#888" stroke="#000" stroke-width="2.5"/>
-      <!-- Bolt on body -->
-      <circle cx="21" cy="38" r="2" fill="#FFD700" stroke="#000" stroke-width="1"/>
-      <!-- Arms -->
-      <rect x="1" y="32" width="7" height="4" rx="2" fill="#999" stroke="#000" stroke-width="2"/>
-      <rect x="34" y="32" width="7" height="4" rx="2" fill="#999" stroke="#000" stroke-width="2"/>
-      <!-- Square head -->
-      <rect x="7" y="5" width="28" height="24" rx="3" fill="#C0C0C0" stroke="#000" stroke-width="2.5"/>
-      <!-- LED eyes -->
-      <rect x="12" y="12" width="6" height="6" rx="1" fill="#0F0" stroke="#000" stroke-width="1.5">
-        <animate attributeName="fill" values="#0F0;#0A0;#0F0" dur="1s" repeatCount="indefinite"/>
-      </rect>
-      <rect x="24" y="12" width="6" height="6" rx="1" fill="#F00" stroke="#000" stroke-width="1.5">
-        <animate attributeName="fill" values="#F00;#A00;#F00" dur="1.2s" repeatCount="indefinite"/>
-      </rect>
-      <!-- Mouth grid -->
-      <rect x="14" y="22" width="14" height="4" rx="1" fill="#333" stroke="#000" stroke-width="1"/>
-      <line x1="17" y1="22" x2="17" y2="26" stroke="#555" stroke-width="1"/>
-      <line x1="21" y1="22" x2="21" y2="26" stroke="#555" stroke-width="1"/>
-      <line x1="25" y1="22" x2="25" y2="26" stroke="#555" stroke-width="1"/>
-      <!-- Antenna -->
-      <line x1="21" y1="5" x2="21" y2="0" stroke="#000" stroke-width="2"/>
-      <circle cx="21" cy="0" r="2.5" fill="#FF0000" stroke="#000" stroke-width="1.5">
-        <animate attributeName="fill" values="#F00;#FF0;#F00" dur="1.5s" repeatCount="indefinite"/>
-      </circle>
-    </svg>
-  </div>
-
+  <div class="sb-btc">₿ BTC: <span id="btc-price">...</span></div>
+  <div class="agent-list" id="agent-list"></div>
+</div>
 </div>
 
-<!-- Tooltip -->
-<div class="tooltip" id="tooltip">
-  <div class="tt-name" id="ttName"></div>
-  <div class="tt-role" id="ttRole"></div>
-  <div class="tt-strat" id="ttStrat"></div>
-  <div class="tt-stats">
-    <div class="tt-stat"><div class="tt-stat-val" id="ttBal">$10,000</div><div class="tt-stat-lbl">Баланс</div></div>
-    <div class="tt-stat"><div class="tt-stat-val" id="ttTrades">0</div><div class="tt-stat-lbl">Сделок</div></div>
-    <div class="tt-stat"><div class="tt-stat-val" id="ttWin">--%</div><div class="tt-stat-lbl">Винрейт</div></div>
-  </div>
+<div id="statusbar">
+  <span>Gotham3032 AI Office</span>
+  <span>|</span>
+  <span>Агентов: 7</span>
+  <span>|</span>
+  <span>Активных: 7</span>
+  <span>|</span>
+  <span id="clock">--:--:--</span>
 </div>
 
-<!-- Back button -->
-<button class="back-btn" onclick="location.href='index.html'">←</button>
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+  <div class="popup" id="popup"></div>
+</div>
 
 <script>
-// Telegram WebApp
-try{Telegram.WebApp.ready();Telegram.WebApp.expand()}catch(e){}
+const agents=[
+{name:'Альф',role:'Теханалитик',task:'Анализирует BTC графики',strategy:'Теханализ + индикаторы',hat:'#6a5acd',body:'#4a4aaa'},
+{name:'Нова',role:'Новостной аналитик',task:'Мониторит новости',strategy:'Новостной скрининг',hat:'#cc2233',body:'#cc4444'},
+{name:'Сатоши',role:'On-chain аналитик',task:'Читает блокчейн',strategy:'On-chain метрики',hat:'#222',body:'#333'},
+{name:'Оракл',role:'Сентимент-аналитик',task:'Чувствует рынок',strategy:'Анализ настроений',hat:'#8b00ff',body:'#6a2c91'},
+{name:'Рита',role:'Агрессивный трейдер',task:'Ставит по-крупному',strategy:'Высокий риск / профит',hat:'#ff69b4',body:'#e75480'},
+{name:'Хедж',role:'Консервативный трейдер',task:'Считает риски',strategy:'Хеджирование + стопы',hat:'#2e8b57',body:'#3a6b4a'},
+{name:'Бот-9000',role:'Алго-трейдер',task:'Выполняет алгоритм',strategy:'Алгоритмическая торговля',hat:'#c0c0c0',body:'#999'}
+];
+
+// Build sidebar agent cards
+const listEl=document.getElementById('agent-list');
+agents.forEach((a,i)=>{
+const card=document.createElement('div');
+card.className='agent-card';
+card.id='card-'+i;
+card.onclick=()=>highlightAgent(i);
+card.innerHTML=`
+<div class="agent-avatar">
+  <svg width="32" height="32" viewBox="0 0 32 32">
+    <rect x="9" y="14" width="14" height="10" fill="${a.body}" />
+    <circle cx="16" cy="12" r="7" fill="#f5c6a0"/>
+    <rect x="9" y="3" width="14" height="6" fill="${a.hat}"/>
+    ${i===6?'<rect x="15" y="0" width="2" height="4" fill="#888"/><circle cx="16" cy="0" r="2" fill="#f44"/>':''}
+  </svg>
+</div>
+<div class="agent-info">
+  <div class="agent-name">${a.name} <span class="dot"></span></div>
+  <div class="agent-role">${a.role}</div>
+  <div class="agent-task">${a.task}</div>
+</div>`;
+listEl.appendChild(card);
+});
+
+// Highlight agent on floor
+let activeCard=-1;
+function highlightAgent(i){
+  document.querySelectorAll('.desk').forEach(d=>d.classList.remove('highlighted'));
+  document.querySelectorAll('.agent-card').forEach(c=>c.classList.remove('active'));
+  if(activeCard===i){activeCard=-1;return;}
+  activeCard=i;
+  document.getElementById('desk-'+i).classList.add('highlighted');
+  document.getElementById('card-'+i).classList.add('active');
+  document.getElementById('desk-'+i).scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// Popup
+function showPopup(i){
+  const a=agents[i];
+  const p=document.getElementById('popup');
+  p.innerHTML=`
+    <span class="popup-close" onclick="closePopup(event,true)">✕</span>
+    <h3>${a.name}</h3>
+    <p>${a.role}</p>
+    <div style="margin-top:8px">
+      <div class="stat-row"><span>Стратегия</span><span class="stat-val">${a.strategy}</span></div>
+      <div class="stat-row"><span>Баланс</span><span class="stat-val">$10,000</span></div>
+      <div class="stat-row"><span>Сделок</span><span class="stat-val">0</span></div>
+      <div class="stat-row"><span>Win Rate</span><span class="stat-val">--%</span></div>
+      <div class="stat-row"><span>Статус</span><span class="stat-val" style="color:var(--green)">🟢 Активен</span></div>
+    </div>`;
+  document.getElementById('popup-overlay').classList.add('show');
+}
+function closePopup(e,force){
+  if(force||e.target.id==='popup-overlay')document.getElementById('popup-overlay').classList.remove('show');
+}
 
 // Clock
 function updateClock(){
-  const now=new Date();
-  const h=(now.getHours()%12)*30+now.getMinutes()*.5;
-  const m=now.getMinutes()*6;
-  document.getElementById('handH').style.transform=`rotate(${h}deg)`;
-  document.getElementById('handM').style.transform=`rotate(${m}deg)`;
+  const d=new Date();
+  document.getElementById('clock').textContent=d.toLocaleTimeString('ru-RU');
 }
 setInterval(updateClock,1000);updateClock();
 
@@ -470,48 +334,32 @@ async function fetchBTC(){
     const r=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
     const d=await r.json();
     const p=parseFloat(d.price).toLocaleString('en-US',{maximumFractionDigits:0});
-    document.getElementById('btcPrice').textContent='$'+p;
-  }catch(e){document.getElementById('btcPrice').textContent='$ERR'}
+    document.getElementById('btc-price').textContent='$'+p;
+    document.getElementById('wb-btc').textContent='$'+p;
+  }catch(e){
+    document.getElementById('btc-price').textContent='N/A';
+    document.getElementById('wb-btc').textContent='N/A';
+  }
 }
 fetchBTC();setInterval(fetchBTC,15000);
 
-// Tooltip
-const tip=document.getElementById('tooltip');
-function showTip(el){
-  event.stopPropagation();
-  document.getElementById('ttName').textContent=el.dataset.name;
-  document.getElementById('ttRole').textContent=el.dataset.role;
-  document.getElementById('ttStrat').textContent='«'+el.dataset.strat+'»';
-  document.getElementById('ttBal').textContent=el.dataset.bal;
-  document.getElementById('ttTrades').textContent=el.dataset.trades;
-  document.getElementById('ttWin').textContent=el.dataset.win;
-  const r=el.getBoundingClientRect();
-  let x=r.left+r.width/2;
-  let y=r.top-10;
-  tip.classList.add('active');
-  const tw=tip.offsetWidth,th=tip.offsetHeight;
-  x=Math.max(5,Math.min(x-tw/2,window.innerWidth-tw-5));
-  y=y-th;if(y<5)y=r.bottom+10;
-  tip.style.left=x+'px';tip.style.top=y+'px';
-}
-document.addEventListener('click',()=>tip.classList.remove('active'));
+// Floor tiles
+const floor=document.getElementById('floor');
+for(let i=0;i<280;i++){const t=document.createElement('div');t.className='tile';floor.appendChild(t);}
 
-// Speech bubbles
-const phrases=['Хмм... 🤔','Лонг! 🚀','Шорт! 📉','HODL! 💎','Покупаем!','Продаём!','Кофе... ☕','Биток растёт!','Медведи идут 🐻','Быки рулят 🐂','Риск/ревард 👌','Ликвидация! 😱','Профит! 💰','Анализирую...','Сигнал!','К луне! 🌙'];
-function showBubble(){
-  const i=Math.floor(Math.random()*7)+1;
-  const b=document.getElementById('b'+i);
-  b.textContent=phrases[Math.floor(Math.random()*phrases.length)];
-  b.classList.add('show');
-  setTimeout(()=>b.classList.remove('show'),3000);
-}
-setInterval(showBubble,5000);
-setTimeout(showBubble,1500);
-
-// Stagger bob animation
-document.querySelectorAll('.char').forEach((c,i)=>{
-  c.style.animationDelay=(i*0.3)+'s';
+// Vary idle animations
+document.querySelectorAll('.character').forEach((c,i)=>{
+  c.style.animationDelay=(i*0.4)+'s';
+  c.style.animationDuration=(2.5+i*0.3)+'s';
 });
+
+// Telegram WebApp
+try{
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+  Telegram.WebApp.BackButton.show();
+  Telegram.WebApp.BackButton.onClick(()=>window.location.href='index.html');
+}catch(e){}
 </script>
 </body>
 </html>
