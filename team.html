@@ -79,7 +79,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
 
 /* Character SVG — bigger */
 .char-svg{width:13vw;height:17vw;image-rendering:pixelated;position:absolute;top:-9vw;z-index:5;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))}
-.char-svg.bob{animation:bob 2s ease-in-out infinite}
+.char-svg.bob{}
 
 /* Desk */
 .desk{width:13vw;height:5vh;background:#e8e0d8;border:2px solid #aaa;border-radius:1px;position:relative;margin-top:-1vh;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,0.3)}
@@ -135,6 +135,8 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
 
 /* Animations */
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+@keyframes blink{0%,42%,46%,100%{ry:9}44%{ry:1}}
+@keyframes blinkSmall{0%,42%,46%,100%{ry:6}44%{ry:0.5}}
 @keyframes flicker{0%,100%{background:#2244aa}30%{background:#2255cc}60%{background:#1a3388}90%{background:#2244aa}}
 @keyframes glow{0%,100%{box-shadow:0 0 10px 5px rgba(255,213,79,0.25)}50%{box-shadow:0 0 15px 8px rgba(255,213,79,0.45)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
@@ -287,15 +289,15 @@ function charSVG(a, size) {
       svg += `<rect x="50" y="24" width="14" height="18" rx="4" fill="#3a6b47" stroke="#000" stroke-width="2"/>`;
     }
 
-    // BIG EYES (touching in center, like South Park)
+    // BIG EYES with blink animation
     if (a.hair !== 'hood') {
-      svg += `<ellipse cx="28" cy="26" rx="8" ry="9" fill="#fff" stroke="#000" stroke-width="2"/>`;
-      svg += `<ellipse cx="42" cy="26" rx="8" ry="9" fill="#fff" stroke="#000" stroke-width="2"/>`;
+      svg += `<ellipse cx="28" cy="26" rx="8" ry="9" fill="#fff" stroke="#000" stroke-width="2"><animate attributeName="ry" values="9;9;1;9;9" keyTimes="0;0.42;0.44;0.46;1" dur="${3+Math.random()*3}s" repeatCount="indefinite"/></ellipse>`;
+      svg += `<ellipse cx="42" cy="26" rx="8" ry="9" fill="#fff" stroke="#000" stroke-width="2"><animate attributeName="ry" values="9;9;1;9;9" keyTimes="0;0.42;0.44;0.46;1" dur="${3+Math.random()*3}s" repeatCount="indefinite"/></ellipse>`;
       svg += `<circle cx="30" cy="26" r="3" fill="#111"/>`;
       svg += `<circle cx="44" cy="26" r="3" fill="#111"/>`;
     } else {
-      svg += `<ellipse cx="30" cy="27" rx="5" ry="6" fill="#fff" stroke="#000" stroke-width="1.5"/>`;
-      svg += `<ellipse cx="40" cy="27" rx="5" ry="6" fill="#fff" stroke="#000" stroke-width="1.5"/>`;
+      svg += `<ellipse cx="30" cy="27" rx="5" ry="6" fill="#fff" stroke="#000" stroke-width="1.5"><animate attributeName="ry" values="6;6;0.5;6;6" keyTimes="0;0.42;0.44;0.46;1" dur="${3+Math.random()*3}s" repeatCount="indefinite"/></ellipse>`;
+      svg += `<ellipse cx="40" cy="27" rx="5" ry="6" fill="#fff" stroke="#000" stroke-width="1.5"><animate attributeName="ry" values="6;6;0.5;6;6" keyTimes="0;0.42;0.44;0.46;1" dur="${3+Math.random()*3}s" repeatCount="indefinite"/></ellipse>`;
       svg += `<circle cx="31" cy="27" r="2" fill="#111"/>`;
       svg += `<circle cx="41" cy="27" r="2" fill="#111"/>`;
     }
@@ -307,11 +309,11 @@ function charSVG(a, size) {
       svg += `<line x1="38" y1="26" x2="32" y2="26" stroke="#333" stroke-width="2"/>`;
     }
 
-    // MOUTH
+    // MOUTH — animated mumbling
     if (a.hair === 'hood') {
-      svg += `<ellipse cx="35" cy="37" rx="4" ry="2" fill="#c48870" stroke="#000" stroke-width="1"/>`;
+      svg += `<ellipse cx="35" cy="37" rx="4" ry="2" fill="#c48870" stroke="#000" stroke-width="1"><animate attributeName="ry" values="2;1.2;2;2.5;2" dur="${(2+Math.random()*2).toFixed(1)}s" repeatCount="indefinite"/></ellipse>`;
     } else {
-      svg += `<path d="M27,36 Q35,42 43,36" fill="none" stroke="#000" stroke-width="2"/>`;
+      svg += `<ellipse cx="35" cy="37" rx="5" ry="2.5" fill="#222" stroke="#000" stroke-width="1.5"><animate attributeName="ry" values="2.5;1;2.5;3.5;2.5" dur="${(2+Math.random()*2).toFixed(1)}s" repeatCount="indefinite"/></ellipse>`;
     }
 
     // FAT ROUND BODY (wider than head!)
@@ -371,9 +373,6 @@ agents.forEach(a=>{
   </div>`;
  st.onclick=()=>openModal(a);
  office.appendChild(st);
-
- const svg=st.querySelector('.bob');
- svg.style.animationDelay=(Math.random()*2).toFixed(1)+'s';
  const scr=st.querySelector('.screen');
  const colors=['#2244aa','#22aa44','#aa4422','#4422aa','#2288aa'];
  const c1=colors[Math.floor(Math.random()*colors.length)];
