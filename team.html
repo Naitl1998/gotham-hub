@@ -446,12 +446,69 @@ function highlightStation(id){
 }
 
 // Modal
+// Live agent data
+let agentData = null;
+async function fetchAgentData(){
+ try{
+  const r=await fetch('data/agents.json?v='+Date.now());
+  agentData=await r.json();
+  updateAgentUI();
+ }catch(e){}
+}
+function updateAgentUI(){
+ if(!agentData)return;
+ document.querySelectorAll('.agent-card').forEach(card=>{
+  const name=card.querySelector('.ac-name');
+  if(!name)return;
+  const n=name.textContent.replace(/[🟢🟡🔴⚡\s]/g,'').trim();
+  const entry=Object.values(agentData.agents).find(a=>n.includes(a.name));
+  if(!entry)return;
+  const dot=card.querySelector('.ac-dot');
+  const task=card.querySelector('.ac-task');
+  if(entry.status==='analyzing'){
+   if(dot)dot.style.background='#ffab00';
+   if(task)task.textContent='⏳ Анализирует...';
+  }else if(entry.status==='done'&&entry.signal){
+   if(dot)dot.style.background='#4caf50';
+   const sig=entry.signal==='BUY'?'📈 BUY':entry.signal==='SELL'?'📉 SELL':'⏳ HOLD';
+   if(task)task.textContent=sig+' ('+entry.confidence+'%) — '+(entry.analysis||'').substring(0,40);
+  }
+ });
+}
+fetchAgentData();setInterval(fetchAgentData,30000);
+
 function openModal(a){
- document.getElementById('m-avatar').outerHTML=charSVG(a,48).replace('<svg','<svg class="m-avatar" id="m-avatar"');
+ const id=a.id||a.name.toLowerCase();
+ const live=agentData&&agentData.agents[id];
+ document.getElementById('m-avatar').outerHTML=charSVG?charSVG(a,48).replace('<svg','<svg class="m-avatar" id="m-avatar"'):'';
  document.getElementById('m-name').textContent=a.name;
- document.getElementById('m-role').textContent=a.emoji+' '+a.role;
- document.getElementById('m-strat').textContent='Стратегия: '+a.strat;
+ document.getElementById('m-role').textContent=(a.emoji||'👤')+' '+a.role;
+ document.getElementById('m-strat').textContent='Стратегия: '+(a.strat||'—');
+ 
+ const stats=document.querySelector('.m-stats');
+ if(live){
+  stats.innerHTML=`
+   <div class="m-stat"><div class="val">$${live.balance.toLocaleString()}</div><div class="lbl">Баланс</div></div>
+   <div class="m-stat"><div class="val">${live.trades}</div><div class="lbl">Сделки</div></div>
+   <div class="m-stat"><div class="val">${live.wins+live.losses>0?Math.round(live.wins/(live.wins+live.losses)*100)+'%':'—%'}</div><div class="lbl">Win rate</div></div>
+   ${live.signal?`<div class="m-stat" style="grid-column:span 3"><div class="val" style="color:${live.signal==='BUY'?'#4caf50':live.signal==='SELL'?'#f44':'#ffab00'}">${live.signal} ${live.confidence}%</div><div class="lbl">${live.analysis||''}</div></div>`:''}
+   <div class="m-stat" style="grid-column:span 3">
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:4px">
+     <button onclick="toggleAgent('${id}',true)" style="padding:4px 12px;background:#4caf50;color:#fff;border:none;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit">▶ Вкл</button>
+     <button onclick="toggleAgent('${id}',false)" style="padding:4px 12px;background:#f44;color:#fff;border:none;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit">⏸ Выкл</button>
+    </div>
+    <div class="lbl" style="margin-top:4px">Статус: ${live.enabled?'🟢 Активен':'🔴 Выключен'} | Последний: ${live.lastRun?new Date(live.lastRun).toLocaleTimeString('ru'):'—'}</div>
+   </div>`;
+ }
  document.getElementById('modal-overlay').classList.add('show');
+}
+async function toggleAgent(id,enabled){
+ if(!agentData||!agentData.agents[id])return;
+ agentData.agents[id].enabled=enabled;
+ agentData.agents[id].status=enabled?'idle':'disabled';
+ // Visual update
+ updateAgentUI();
+ closeModal();
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('show')}
 
