@@ -487,18 +487,51 @@ function openModal(a){
  
  const stats=document.querySelector('.m-stats');
  if(live){
-  stats.innerHTML=`
+  const pnlColor=live.pnl>0?'#4caf50':live.pnl<0?'#f44':'#888';
+  const pnlSign=live.pnl>0?'+':'';
+  
+  let html=`
    <div class="m-stat"><div class="val">$${live.balance.toLocaleString()}</div><div class="lbl">Баланс</div></div>
    <div class="m-stat"><div class="val">${live.trades}</div><div class="lbl">Сделки</div></div>
+   <div class="m-stat"><div class="val" style="color:${pnlColor}">${pnlSign}$${live.pnl||0}</div><div class="lbl">P&L</div></div>
+   <div class="m-stat"><div class="val">${live.wins||0}/${live.losses||0}</div><div class="lbl">Win/Loss</div></div>
    <div class="m-stat"><div class="val">${live.wins+live.losses>0?Math.round(live.wins/(live.wins+live.losses)*100)+'%':'—%'}</div><div class="lbl">Win rate</div></div>
-   ${live.signal?`<div class="m-stat" style="grid-column:span 3"><div class="val" style="color:${live.signal==='BUY'?'#4caf50':live.signal==='SELL'?'#f44':'#ffab00'}">${live.signal} ${live.confidence}%</div><div class="lbl">${live.analysis||''}</div></div>`:''}
-   <div class="m-stat" style="grid-column:span 3">
+   <div class="m-stat"><div class="val" style="font-size:11px;color:${live.signal==='BUY'?'#4caf50':live.signal==='SELL'?'#f44':'#ffab00'}">${live.signal||'—'} ${live.confidence?live.confidence+'%':''}</div><div class="lbl">Сигнал</div></div>`;
+  
+  // Analysis text
+  if(live.analysis){
+   html+=`<div class="m-stat" style="grid-column:span 3;text-align:left"><div class="lbl" style="font-size:9px;color:#aaa;line-height:1.4">📝 ${live.analysis}</div></div>`;
+  }
+  
+  // Open positions (Polymarket bets)
+  if(live.openPositions&&live.openPositions.length>0){
+   html+=`<div class="m-stat" style="grid-column:span 3;text-align:left;padding:8px">
+    <div style="font-size:10px;font-weight:700;color:#8af;margin-bottom:6px">📊 Открытые ставки Polymarket:</div>`;
+   live.openPositions.forEach(p=>{
+    const posColor=p.position==='YES'?'#4caf50':'#f44';
+    html+=`<div style="background:#0a0a1a;padding:6px 8px;border-radius:4px;margin-bottom:4px;border-left:3px solid ${posColor}">
+     <div style="font-size:9px;font-weight:600;color:#e0e0ff">${p.market||'—'}</div>
+     <div style="display:flex;justify-content:space-between;margin-top:3px;font-size:8px;color:#888">
+      <span>Позиция: <b style="color:${posColor}">${p.position||'—'}</b></span>
+      <span>Цена: <b style="color:#fff">${p.price||'—'}</b></span>
+      <span>Сумма: <b style="color:#fff">$${p.amount||'—'}</b></span>
+     </div>
+     ${p.openedAt?`<div style="font-size:7px;color:#555;margin-top:2px">⏰ ${new Date(p.openedAt).toLocaleString('ru')}</div>`:''}
+    </div>`;
+   });
+   html+=`</div>`;
+  }
+  
+  // Controls
+  html+=`<div class="m-stat" style="grid-column:span 3">
     <div style="display:flex;gap:8px;justify-content:center;margin-top:4px">
      <button onclick="toggleAgent('${id}',true)" style="padding:4px 12px;background:#4caf50;color:#fff;border:none;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit">▶ Вкл</button>
      <button onclick="toggleAgent('${id}',false)" style="padding:4px 12px;background:#f44;color:#fff;border:none;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit">⏸ Выкл</button>
     </div>
     <div class="lbl" style="margin-top:4px">Статус: ${live.enabled?'🟢 Активен':'🔴 Выключен'} | Последний: ${live.lastRun?new Date(live.lastRun).toLocaleTimeString('ru'):'—'}</div>
    </div>`;
+  
+  stats.innerHTML=html;
  }
  document.getElementById('modal-overlay').classList.add('show');
 }
