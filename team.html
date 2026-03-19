@@ -152,7 +152,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
   <div id="modal">
     <span class="close" onclick="closeModal()">✕</span>
     <div class="m-header">
-      <svg class="m-avatar" id="m-avatar" viewBox="0 0 48 64"></svg>
+      <svg class="m-avatar" id="m-avatar" viewBox="0 0 60 80"></svg>
       <div><div class="m-name" id="m-name"></div><div class="m-role" id="m-role"></div><div class="m-strat" id="m-strat"></div></div>
     </div>
     <div class="m-stats">
@@ -182,68 +182,107 @@ const agents=[
  hair:'antenna',hairColor:'#8899aa',skinColor:'#b0bec5',shirtColor:'#78909c',isRobot:true,row:2,col:2,emoji:'🤖'}
 ];
 
-// Generate character SVG
+// Generate South Park style character SVG
 function charSVG(a,size){
- const vb=size?`width="${size}" height="${size}" viewBox="0 0 48 64"`:'viewBox="0 0 48 64"';
- let svg=`<svg xmlns="http://www.w3.org/2000/svg" ${vb} style="image-rendering:pixelated">`;
- const sk=a.skinColor,hc=a.hairColor,sc=a.shirtColor;
- // Hair/hat
- if(a.hair==='beanie-messy'){
-  svg+=`<rect x="12" y="2" width="24" height="6" fill="${hc}" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="10" y="6" width="28" height="4" fill="${hc}" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="9" y="8" width="4" height="6" fill="#6b3a1a"/>`;
-  svg+=`<rect x="35" y="8" width="4" height="6" fill="#6b3a1a"/>`;
- }else if(a.hair==='beret'){
-  svg+=`<rect x="10" y="3" width="28" height="5" rx="2" fill="${hc}" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="8" y="6" width="32" height="3" fill="${hc}" stroke="#000" stroke-width="1"/>`;
- }else if(a.hair==='hood'){
-  svg+=`<rect x="10" y="1" width="28" height="12" rx="3" fill="${hc}" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="8" y="8" width="32" height="6" fill="${hc}" stroke="#000" stroke-width="1"/>`;
- }else if(a.hair==='wizard'){
-  svg+=`<polygon points="24,0 10,12 38,12" fill="${hc}" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="10" y="10" width="28" height="4" fill="${hc}" stroke="#000" stroke-width="1"/>`;
-  svg+=`<circle cx="24" cy="2" r="2" fill="#ffd700"/>`;
- }else if(a.hair==='pink-beanie'){
-  svg+=`<rect x="12" y="2" width="24" height="6" fill="${hc}" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="10" y="6" width="28" height="4" fill="${hc}" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="36" y="6" width="6" height="10" rx="3" fill="${hc}" stroke="#000" stroke-width="1"/>`;
- }else if(a.hair==='ushanka'){
-  svg+=`<rect x="10" y="2" width="28" height="8" fill="${hc}" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="6" y="8" width="36" height="5" rx="2" fill="#5a4a3a" stroke="#000" stroke-width="1"/>`;
- }else if(a.hair==='antenna'){
-  svg+=`<line x1="24" y1="0" x2="24" y2="6" stroke="#666" stroke-width="2"/>`;
-  svg+=`<circle cx="24" cy="0" r="3" fill="#f44"/>`;
- }
- // Head
+ const vb=size?`width="${size}" height="${size}" viewBox="0 0 60 80"`:'viewBox="0 0 60 80"';
+ let svg=`<svg xmlns="http://www.w3.org/2000/svg" ${vb} style="image-rendering:auto">`;
+
  if(a.isRobot){
-  svg+=`<rect x="12" y="10" width="24" height="20" fill="${sk}" stroke="#000" stroke-width="1.5" rx="2"/>`;
-  // LED eyes
-  svg+=`<rect x="16" y="16" width="6" height="6" fill="#0f0" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="26" y="16" width="6" height="6" fill="#0f0" stroke="#000" stroke-width="1"/>`;
-  svg+=`<rect x="19" y="25" width="10" height="2" fill="#666"/>`;
+  // Бот-9000: square silver head, antenna, LED eyes
+  svg+=`<line x1="30" y1="0" x2="30" y2="8" stroke="#666" stroke-width="2"/>`;
+  svg+=`<circle cx="30" cy="2" r="3" fill="#f44" stroke="#000" stroke-width="1"/>`;
+  svg+=`<rect x="12" y="8" width="36" height="32" rx="2" fill="#c0c0c0" stroke="#000" stroke-width="2"/>`;
+  svg+=`<rect x="19" y="16" width="8" height="8" fill="#0f0" stroke="#000" stroke-width="1.5"/>`;
+  svg+=`<rect x="33" y="16" width="8" height="8" fill="#0f0" stroke="#000" stroke-width="1.5"/>`;
+  svg+=`<rect x="22" y="30" width="16" height="3" fill="#666" stroke="#000" stroke-width="1"/>`;
+  // Body
+  svg+=`<rect x="18" y="40" width="24" height="22" fill="#999" stroke="#000" stroke-width="2"/>`;
+  // Arms
+  svg+=`<rect x="8" y="45" width="10" height="6" rx="1" fill="#888" stroke="#000" stroke-width="1.5"/>`;
+  svg+=`<rect x="42" y="45" width="10" height="6" rx="1" fill="#888" stroke="#000" stroke-width="1.5"/>`;
+  // Legs
+  svg+=`<rect x="22" y="62" width="7" height="10" fill="#555" stroke="#000" stroke-width="1.5"/>`;
+  svg+=`<rect x="31" y="62" width="7" height="10" fill="#555" stroke="#000" stroke-width="1.5"/>`;
  }else{
-  svg+=`<rect x="14" y="10" width="20" height="18" rx="3" fill="${sk}" stroke="#000" stroke-width="1.5"/>`;
-  // Eyes
-  svg+=`<rect x="17" y="17" width="5" height="5" fill="#fff" stroke="#000" stroke-width="0.5"/>`;
-  svg+=`<rect x="26" y="17" width="5" height="5" fill="#fff" stroke="#000" stroke-width="0.5"/>`;
-  svg+=`<rect x="19" y="19" width="2.5" height="2.5" fill="#111"/>`;
-  svg+=`<rect x="28" y="19" width="2.5" height="2.5" fill="#111"/>`;
-  // Mouth
-  svg+=`<rect x="20" y="25" width="8" height="1.5" rx="0.5" fill="#c48870"/>`;
-  if(a.glasses){
-   svg+=`<rect x="15" y="16" width="8" height="7" rx="1" fill="none" stroke="#333" stroke-width="1.2"/>`;
-   svg+=`<rect x="25" y="16" width="8" height="7" rx="1" fill="none" stroke="#333" stroke-width="1.2"/>`;
-   svg+=`<line x1="23" y1="19" x2="25" y2="19" stroke="#333" stroke-width="1"/>`;
+  const sk='#FDDEB5';
+  // Head
+  svg+=`<circle cx="30" cy="25" r="18" fill="${sk}" stroke="#000" stroke-width="2"/>`;
+
+  // Hat/Hair unique per character
+  if(a.hair==='beanie-messy'){
+   // Альф: blue-purple beanie
+   svg+=`<path d="M12,22 Q12,6 30,4 Q48,6 48,22" fill="#6a5acd" stroke="#000" stroke-width="2"/>`;
+   svg+=`<rect x="11" y="19" width="38" height="5" rx="2" fill="#5a4abd" stroke="#000" stroke-width="1.5"/>`;
+   svg+=`<circle cx="30" cy="4" r="3" fill="#8a7aed" stroke="#000" stroke-width="1"/>`;
+  }else if(a.hair==='beret'){
+   // Нова: red beret
+   svg+=`<ellipse cx="35" cy="10" rx="16" ry="8" fill="#cc2233" stroke="#000" stroke-width="2"/>`;
+   svg+=`<rect x="12" y="12" width="36" height="4" rx="2" fill="#cc2233" stroke="#000" stroke-width="1.5"/>`;
+  }else if(a.hair==='hood'){
+   // Сатоши: orange parka hood like Kenny
+   svg+=`<path d="M10,32 Q8,10 30,4 Q52,10 50,32" fill="#f4a460" stroke="#000" stroke-width="2"/>`;
+   svg+=`<ellipse cx="30" cy="26" rx="12" ry="14" fill="${sk}" stroke="#000" stroke-width="1.5"/>`;
+  }else if(a.hair==='wizard'){
+   // Оракл: tall purple wizard hat
+   svg+=`<polygon points="30,-8 14,18 46,18" fill="#7b2fbe" stroke="#000" stroke-width="2"/>`;
+   svg+=`<rect x="12" y="15" width="36" height="5" rx="2" fill="#6a1fae" stroke="#000" stroke-width="1.5"/>`;
+   svg+=`<circle cx="25" cy="6" r="1.5" fill="#ffd700"/>`;
+   svg+=`<circle cx="33" cy="2" r="1" fill="#ffd700"/>`;
+   svg+=`<circle cx="28" cy="12" r="1.2" fill="#ffd700"/>`;
+  }else if(a.hair==='pink-beanie'){
+   // Рита: pink beanie + ponytail
+   svg+=`<path d="M12,22 Q12,6 30,4 Q48,6 48,22" fill="#ff69b4" stroke="#000" stroke-width="2"/>`;
+   svg+=`<rect x="11" y="19" width="38" height="5" rx="2" fill="#e55aa0" stroke="#000" stroke-width="1.5"/>`;
+   svg+=`<circle cx="30" cy="4" r="3" fill="#ff79c4" stroke="#000" stroke-width="1"/>`;
+   svg+=`<path d="M46,18 Q54,20 52,30 Q50,35 48,32" fill="#ff69b4" stroke="#000" stroke-width="1.5" fill-opacity="0.9"/>`;
+  }else if(a.hair==='ushanka'){
+   // Хедж: green ushanka like Kyle's
+   svg+=`<path d="M10,22 Q10,4 30,2 Q50,4 50,22" fill="#2e8b57" stroke="#000" stroke-width="2"/>`;
+   svg+=`<rect x="8" y="18" width="44" height="6" rx="2" fill="#3a6b47" stroke="#000" stroke-width="1.5"/>`;
+   svg+=`<rect x="6" y="22" width="10" height="14" rx="3" fill="#3a6b47" stroke="#000" stroke-width="1.5"/>`;
+   svg+=`<rect x="44" y="22" width="10" height="14" rx="3" fill="#3a6b47" stroke="#000" stroke-width="1.5"/>`;
   }
+
+  // Eyes (big white ovals, close together)
+  if(a.hair!=='hood'){
+   svg+=`<ellipse cx="24" cy="23" rx="5" ry="6" fill="#fff" stroke="#000" stroke-width="1.2"/>`;
+   svg+=`<ellipse cx="36" cy="23" rx="5" ry="6" fill="#fff" stroke="#000" stroke-width="1.2"/>`;
+   svg+=`<circle cx="25" cy="23" r="2" fill="#111"/>`;
+   svg+=`<circle cx="37" cy="23" r="2" fill="#111"/>`;
+  }else{
+   // Kenny-style: smaller face opening
+   svg+=`<ellipse cx="26" cy="25" rx="3.5" ry="4" fill="#fff" stroke="#000" stroke-width="1"/>`;
+   svg+=`<ellipse cx="34" cy="25" rx="3.5" ry="4" fill="#fff" stroke="#000" stroke-width="1"/>`;
+   svg+=`<circle cx="27" cy="25" r="1.5" fill="#111"/>`;
+   svg+=`<circle cx="35" cy="25" r="1.5" fill="#111"/>`;
+  }
+
+  // Glasses for Нова
+  if(a.glasses){
+   svg+=`<circle cx="24" cy="23" r="7" fill="none" stroke="#333" stroke-width="1.5"/>`;
+   svg+=`<circle cx="36" cy="23" r="7" fill="none" stroke="#333" stroke-width="1.5"/>`;
+   svg+=`<line x1="31" y1="23" x2="29" y2="23" stroke="#333" stroke-width="1.5"/>`;
+  }
+
+  // Mouth
+  if(a.hair==='hood'){
+   svg+=`<ellipse cx="30" cy="33" rx="3" ry="1.5" fill="#c48870" stroke="#000" stroke-width="0.8"/>`;
+  }else{
+   svg+=`<path d="M25,32 Q30,35 35,32" fill="none" stroke="#000" stroke-width="1.5"/>`;
+  }
+
+  // Body (jacket)
+  const jc=a.hair==='beanie-messy'?'#6a5acd':a.hair==='beret'?'#cc4444':a.hair==='hood'?'#f4a460':a.hair==='wizard'?'#7b2fbe':a.hair==='pink-beanie'?'#e75480':a.hair==='ushanka'?'#3a8a5a':'#999';
+  svg+=`<rect x="18" y="40" width="24" height="22" rx="2" fill="${jc}" stroke="#000" stroke-width="2"/>`;
+  // Arms (mittens)
+  svg+=`<rect x="8" y="45" width="10" height="6" rx="2" fill="${jc}" stroke="#000" stroke-width="1.5"/>`;
+  svg+=`<rect x="42" y="45" width="10" height="6" rx="2" fill="${jc}" stroke="#000" stroke-width="1.5"/>`;
+  // Legs
+  const lc=a.hair==='hood'?'#c48444':'#222';
+  svg+=`<rect x="22" y="62" width="7" height="10" fill="${lc}" stroke="#000" stroke-width="1.5"/>`;
+  svg+=`<rect x="31" y="62" width="7" height="10" fill="${lc}" stroke="#000" stroke-width="1.5"/>`;
  }
- // Body
- svg+=`<rect x="10" y="30" width="28" height="18" rx="2" fill="${sc}" stroke="#000" stroke-width="1.5"/>`;
- // Arms
- svg+=`<rect x="4" y="32" width="7" height="12" rx="2" fill="${sc}" stroke="#000" stroke-width="1"/>`;
- svg+=`<rect x="37" y="32" width="7" height="12" rx="2" fill="${sc}" stroke="#000" stroke-width="1"/>`;
- // Hands
- svg+=`<rect x="5" y="43" width="5" height="4" rx="1" fill="${sk}" stroke="#000" stroke-width="0.5"/>`;
- svg+=`<rect x="38" y="43" width="5" height="4" rx="1" fill="${sk}" stroke="#000" stroke-width="0.5"/>`;
+
  svg+=`</svg>`;
  return svg;
 }
