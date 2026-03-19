@@ -52,7 +52,6 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
   letter-spacing:0.3px;
   color:#fff;
   box-shadow:0 1px 3px rgba(0,0,0,0.4);
-  pointer-events:none;
   white-space:nowrap;
 }
 .office-sign.gold{border-color:#f7c948;color:#f7c948;background:linear-gradient(180deg,#2a2210,#1a1508)}
@@ -170,7 +169,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
   </div>
 
   <!-- Office signs -->
-  <div class="office-sign gold" style="top:53%;left:50%;transform:translateX(-50%)">👔 Админ Got ⚡</div>
+  <div class="office-sign gold" style="top:53%;left:50%;transform:translateX(-50%);pointer-events:auto;cursor:pointer" onclick="openModal({name:'Got ⚡',role:'Главный Админ',strat:'Мультиагентное управление',task:'Координирует все отделы'})">👔 Админ Got ⚡</div>
   <div class="office-sign purple" style="top:13%;right:5%">📊 Аналитики</div>
   <div class="office-sign blue" style="top:55%;left:5%">🖥 Серверная</div>
   <div class="office-sign green" style="top:55%;right:5%">✅ Отдел проверки</div>
