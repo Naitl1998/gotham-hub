@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажёр меню — The Cloud Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c0e; --bg2:#141318; --card:#1a1916; --card2:#201e1a;
+    --line:#2b2925; --gold:#f0a92a; --gold-dim:#7a5e25;
+    --txt:#eceae4; --muted:#928e85; --green:#4caf6a; --red:#e0584f;
+    --pork:#e98aa0; --beef:#c98b5a; --chicken:#e7c14a; --nuts:#b07b3e;
+    --sea:#e8956a; --fish:#5aa9c9; --vegan:#6fc06a; --duck:#c47a4e;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--txt);
+    font-family:'Inter',-apple-system,system-ui,sans-serif;
+    font-size:16px;line-height:1.45;padding-bottom:90px;
+  }
+  h1,h2,h3,.disp{font-family:'Oswald',sans-serif;letter-spacing:.5px;margin:0}
+  .wrap{max-width:640px;margin:0 auto;padding:0 14px}
+
+  /* header */
+  header{
+    position:sticky;top:0;z-index:40;background:linear-gradient(180deg,#0c0c0e 70%,rgba(12,12,14,0));
+    padding:14px 0 10px;
+  }
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .logo{font-family:'Oswald';font-weight:700;font-size:26px;color:var(--gold);text-transform:uppercase;line-height:.9}
+  .brand .sub{font-size:11px;color:var(--muted);letter-spacing:3px;text-transform:uppercase}
+  .tabs{display:flex;gap:8px;margin-top:12px}
+  .tab{
+    flex:1;text-align:center;padding:11px 6px;border-radius:12px;background:var(--card);
+    border:1px solid var(--line);color:var(--muted);font-weight:600;font-size:14px;cursor:pointer;
+    font-family:'Oswald';letter-spacing:.5px;text-transform:uppercase;transition:.15s;
+  }
+  .tab.active{background:var(--gold);color:#1a1407;border-color:var(--gold)}
+
+  /* study */
+  .legend{display:flex;flex-direction:column;gap:8px;margin:4px 0 14px}
+  .legrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .legttl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);width:100%;margin-bottom:1px}
+  .legttl.warn{color:var(--gold)}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;
+    padding:4px 9px;border-radius:20px;background:var(--card2);border:1px solid var(--line)}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .d-pork{background:var(--pork)}.d-beef{background:var(--beef)}.d-chicken{background:var(--chicken)}
+  .d-nuts{background:var(--nuts)}.d-sea{background:var(--sea)}.d-fish{background:var(--fish)}.d-vegan{background:var(--vegan)}.d-duck{background:var(--duck)}
+
+  .catbar{display:flex;gap:7px;overflow-x:auto;padding:4px 0 12px;-ms-overflow-style:none;scrollbar-width:none}
+  .catbar::-webkit-scrollbar{display:none}
+  .chip{white-space:nowrap;padding:7px 13px;border-radius:20px;background:var(--card);border:1px solid var(--line);
+    color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:'Oswald';letter-spacing:.4px}
+  .chip.active{background:#2c2820;color:var(--gold);border-color:var(--gold-dim)}
+
+  .sechead{font-family:'Oswald';font-size:22px;color:var(--gold);text-transform:uppercase;
+    margin:18px 0 8px;display:flex;align-items:baseline;gap:8px}
+  .sechead .cnt{font-size:13px;color:var(--muted);font-family:'Inter'}
+
+  .item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:9px}
+  .item .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .item .nm{font-weight:600;font-size:15.5px;line-height:1.25}
+  .item .en{font-size:12px;color:var(--muted);font-weight:500;margin-top:2px}
+  .item .price{font-family:'Oswald';color:var(--gold);font-size:18px;white-space:nowrap}
+  .item .usd{font-size:11px;color:var(--muted);font-family:'Inter'}
+  .item .ing{font-size:13px;color:#b9b5ac;margin-top:7px;line-height:1.4}
+  .item .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+  .tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:7px;display:inline-flex;align-items:center;gap:5px;
+    background:var(--card2);border:1px solid var(--line)}
+  .tag-al{border-color:var(--gold);color:#f3cd84}
+  .tag-ok{border-color:#2f5b3a;color:#7fc790;background:rgba(76,175,106,.08)}
+  .meta{font-size:11px;color:var(--muted);margin-top:6px;font-style:italic}
+
+  /* quiz */
+  .quizcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin-top:8px}
+  .scorebar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px;color:var(--muted)}
+  .scorebar b{color:var(--gold);font-family:'Oswald';font-size:17px}
+  .progress{height:6px;background:var(--bg2);border-radius:6px;overflow:hidden;margin-bottom:16px}
+  .progress > div{height:100%;background:var(--gold);width:0;transition:.3s}
+  .qtype{font-size:12px;color:var(--gold-dim);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px;font-family:'Oswald'}
+  .qtext{font-size:19px;font-weight:600;line-height:1.3;margin-bottom:16px}
+  .qtext .hl{color:var(--gold)}
+  .opts{display:flex;flex-direction:column;gap:9px}
+  .opt{padding:13px 14px;border-radius:12px;background:var(--card2);border:1.5px solid var(--line);
+    cursor:pointer;font-size:15px;font-weight:500;transition:.12s;display:flex;align-items:center;gap:10px}
+  .opt:active{transform:scale(.99)}
+  .opt .box{width:20px;height:20px;border-radius:6px;border:2px solid var(--muted);flex:none;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .opt.sel{border-color:var(--gold)}
+  .opt.sel .box{background:var(--gold);border-color:var(--gold);color:#1a1407}
+  .opt.correct{border-color:var(--green);background:rgba(76,175,106,.12)}
+  .opt.wrong{border-color:var(--red);background:rgba(224,88,79,.12)}
+  .opt.correct .box{background:var(--green);border-color:var(--green);color:#fff}
+  .opt.wrong .box{background:var(--red);border-color:var(--red);color:#fff}
+  .btn{width:100%;padding:14px;border-radius:12px;border:none;font-family:'Oswald';font-size:16px;font-weight:600;
+    letter-spacing:.5px;text-transform:uppercase;cursor:pointer;margin-top:16px;transition:.15s}
+  .btn.gold{background:var(--gold);color:#1a1407}
+  .btn.ghost{background:var(--card2);color:var(--txt);border:1px solid var(--line)}
+  .btn:disabled{opacity:.4}
+  .feedback{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.45;display:none}
+  .feedback.ok{background:rgba(76,175,106,.1);border:1px solid var(--green);display:block}
+  .feedback.no{background:rgba(224,88,79,.1);border:1px solid var(--red);display:block}
+  .feedback b{color:var(--gold)}
+  .listinput{flex:1;padding:12px 13px;border-radius:11px;background:var(--card2);border:1.5px solid var(--line);color:var(--txt);font-size:15px;font-family:'Inter'}
+  .listinput:focus{outline:none;border-color:var(--gold)}
+  .addbtn{width:52px;border-radius:11px;border:none;background:var(--gold);color:#1a1407;font-size:24px;font-weight:700;cursor:pointer}
+  .listhint{font-size:13px;min-height:18px;margin-bottom:8px;color:var(--muted)}
+  .listhint.good{color:var(--green)} .listhint.bad{color:var(--red)} .listhint.dup{color:var(--gold)}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:6px}
+  .chipok{font-size:13px;font-weight:600;padding:6px 11px;border-radius:20px;background:rgba(76,175,106,.14);border:1px solid var(--green);color:#cfeed8}
+  .counter{font-size:14px;margin:4px 0 2px}.counter b{color:var(--gold);font-family:'Oswald';font-size:18px}
+
+  .setup{margin-top:8px}
+  .setup h2{font-size:24px;color:var(--gold);text-transform:uppercase;margin-bottom:4px}
+  .setup p{color:var(--muted);font-size:14px;margin:0 0 16px}
+  .modegrid{display:flex;flex-direction:column;gap:9px}
+  .modebtn{text-align:left;padding:15px;border-radius:14px;background:var(--card);border:1px solid var(--line);cursor:pointer}
+  .modebtn .t{font-weight:700;font-size:16px;font-family:'Oswald';letter-spacing:.4px}
+  .modebtn .d{font-size:13px;color:var(--muted);margin-top:3px}
+  .modebtn.on{border-color:var(--gold);background:#211d15}
+
+  .results{text-align:center;padding:24px 10px}
+  .results .big{font-family:'Oswald';font-size:64px;color:var(--gold);line-height:1}
+  .results .lbl{color:var(--muted);font-size:14px;margin:4px 0 18px}
+  .results .verdict{font-size:17px;font-weight:600;margin-bottom:20px}
+
+  .note{font-size:12.5px;color:var(--muted);background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:11px 13px;margin:14px 0;line-height:1.5}
+  .note b{color:var(--gold)}
+</style>
+</head>
+<body>
+<noscript>
+<div style="background:#f0a92a;color:#1a1407;padding:16px 18px;font:600 15px/1.4 -apple-system,system-ui,sans-serif;text-align:center">
+⚠️ Открой этот файл в браузере, а не в предпросмотре.<br>
+Нажми «Поделиться» ⬆️ внизу → «Открыть в Safari» (или Chrome) — тогда тренажёр заработает.
+</div>
+</noscript>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div>
+        <div class="logo">The Cloud Bar</div>
+        <div class="sub">Тренажёр меню · аттестация</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" id="tabStudy" onclick="setTab('study')">📖 Учить</div>
+      <div class="tab" id="tabQuiz" onclick="setTab('quiz')">🎯 Тренажёр</div>
+    </div>
+  </header>
+
+  <!-- STUDY -->
+  <section id="study">
+    <div class="legend" id="legend"></div>
+    <div class="catbar" id="catbar"></div>
+    <div id="menuList"></div>
+    <div class="note" style="margin-top:18px">
+      <b>Аллергены у бара — это только 🥜 орехи и 🦐 морепродукты</b> (креветки, краб).
+      🐔 курица, 🐷 свинина, 🐮 говядина, 🐟 рыба, 🦆 утка, 🌿 веган — это пометки по составу, <b>не аллергены</b>.
+      Песто = орехи. Бекон в бургеры идёт доп-топпингом (свинина).
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" style="display:none"></section>
+</div>
+
+<script>
+/* ============ ДАННЫЕ МЕНЮ ============ */
+// allergens: pork, beef, chicken, nuts, sea, vegan, duck
+const A = {pork:'🐷 Свинина',beef:'🐮 Говядина',chicken:'🐔 Курица',nuts:'🥜 Орехи',sea:'🦐 Морепродукты',fish:'🐟 Рыба',vegan:'🌿 Веган/вег.',duck:'🦆 Утка'};
+const ADOT = {pork:'d-pork',beef:'d-beef',chicken:'d-chicken',nuts:'d-nuts',sea:'d-sea',fish:'d-fish',vegan:'d-vegan',duck:'d-duck'};
+
+const MENU = {
+ 'Завтраки':[
+  {nm:'Блины с ветчиной и сыром',en:'Ham & Cheese Pancakes',p:129,u:'5$',ing:'блины, ветчина, сыр, сметана',al:['pork']},
+  {nm:'Овсянка с манго, кешью и солёной карамелью',en:'Mango Cashew Oatmeal',p:119,u:'5$',ing:'овсянка, манго, кешью, солёная карамель',al:['nuts']},
+  {nm:'Овсянка с беконом, яйцом пашот и соусом блю чиз',en:'Bacon Blue Cheese Oatmeal & Poached Egg',p:149,u:'6$',ing:'овсянка, бекон, яйцо пашот, соус блю чиз',al:['pork']},
+ ],
+ 'Брускетты и сэндвичи':[
+  {nm:'Гриль-сэндвич с курицей, бри и песто',en:'Chicken Pesto Brie Sandwich',p:199,u:'8$',ing:'курица, сыр бри, песто',al:['chicken','nuts']},
+  {nm:'Брускетта с ростбифом и вялеными томатами',en:'Roast Beef Bruschetta',p:149,u:'5.7$',ing:'ростбиф, вяленые томаты',al:['beef']},
+  {nm:'Брускетта с тунцом',en:'Tuna Bruschetta',p:169,u:'6.5$',ing:'тунец, авокадо, сливочный сыр, песто, хлеб на закваске, бальзамик',al:['fish','nuts']},
+ ],
+ 'Паста':[
+  {nm:'Паста четыре сыра',en:'Four Cheese Pasta',p:189,u:'7$',ing:'сыр с плесенью, моцарелла, пармезан, бри, сливки, орегано',al:['vegan']},
+  {nm:'Пенне в соусе песто',en:'Pesto Penne',p:199,u:'8$',ing:'пенне, песто, сливки, пармезан + курица ИЛИ креветки',al:['nuts','chicken','sea']},
+  {nm:'Паста карбонара',en:'Carbonara Pasta',p:179,u:'6.5$',ing:'бекон, сливки, орегано, желток',al:['pork']},
+ ],
+ 'Супы':[
+  {nm:'Домашний куриный суп с вермишелью',en:'Chicken Soup',p:89,u:'3.4$',ing:'курица, перепелиные яйца, вермишель, морковь, лук',al:['chicken']},
+  {nm:'Грибной крем-суп',en:'Creamy Mushroom Soup',p:99,u:'3.8$',ing:'подаётся с гренками',al:['vegan']},
+  {nm:'Классический томатный суп',en:'Tomato Soup',p:99,u:'3.8$',ing:'подаётся с гренками',al:['vegan']},
+ ],
+ 'Русская кухня / горячее':[
+  {nm:'Борщ по богатому',en:'Rich Borscht',p:249,u:'9.5$',ing:'свиное ребро, сало, сметана, горчица, корнишоны, чеснок, лук, укроп, хлеб, чили',al:['pork']},
+  {nm:'Шот водки к борщу',en:'Vodka Shot with Borscht',p:49,u:'2$',ing:'дополнение к борщу',al:[]},
+  {nm:'Пельмени',en:'Pelmeni',p:129,u:'5$',ing:'курица, свинина, лук · варёные/жареные · со сметаной/чесночным соусом',al:['chicken','pork']},
+ ],
+ 'Салаты':[
+  {nm:'Салат Цезарь',en:'Caesar Salad',p:179,u:'6.8$',ing:'айсберг, помидорки черри, крутоны, пармезан + курица ИЛИ креветки',al:['chicken','sea']},
+  {nm:'Тропический салат с креветками и манго',en:'Mango Shrimp Salad',p:179,u:'6.8$',ing:'айсберг, черри, манго, креветки, кешью, пармезан',al:['sea','nuts']},
+  {nm:'Лёгкий салат с тунцом и морским виноградом',en:'Tuna & Sea Grapes Salad',p:149,u:'5.7$',ing:'айсберг, черри, тунец, морской виноград, кунжутная заправка',al:['fish']},
+  {nm:'Салат с лососем и авокадо',en:'Salmon Avocado Salad',p:199,u:'8$',ing:'айсберг, черри, авокадо, копчёный лосось, сливочный сыр, зелёный лук',al:['fish']},
+  {nm:'Капрезе с соусом песто',en:'Pesto Caprese',p:129,u:'5$',ing:'черри, сливочный сыр, зелёный лук, песто, бальзамик',al:['nuts','vegan']},
+  {nm:'Цитрусовый салат с копчёной уткой',en:'Citrus Smoked Duck Salad',p:169,u:'6.5$',ing:'айсберг, черри, апельсин, копчёная утка, малиновая заправка',al:['duck']},
+ ],
+ 'Стейки и горячие блюда':[
+  {nm:'Стейк из тунца',en:'Tuna Steak',p:189,u:'7$',ing:'с картошкой по-деревенски ИЛИ овощами на гриле',al:['fish']},
+  {nm:'Куриная грудка «Маргарита»',en:'Grilled Chicken Pesto Margarita',p:189,u:'7$',ing:'куриная грудка, песто, моцарелла',al:['chicken','nuts']},
+  {nm:'BBQ свиные рёбра',en:'BBQ Pork Ribs',p:269,u:'10$',ing:'свиные рёбра в соусе барбекю, с картошкой по-деревенски',al:['pork']},
+  {nm:'Картофельное пюре с куриными котлетами',en:'Russian Chicken Cutlets & Mash',p:159,u:'6$',ing:'куриные котлеты, картофельное пюре',al:['chicken']},
+  {nm:'Картофельное пюре с копчёной уткой',en:'Smoked Duck & Mash',p:189,u:'7$',ing:'копчёная утка, картофельное пюре',al:['duck']},
+  {nm:'Картофель путин',en:'Poutine Fries',p:189,u:'7$',ing:'картофель фри, говядина, чеддер, моцарелла, соус деми-глясс',al:['beef']},
+  {nm:'Сибас с васаби-пюре',en:'Seabass & Wasabi Mash',p:209,u:'8$',ing:'филе сибаса, картофельное пюре с васаби',al:['fish']},
+  {nm:'Японский тендерлоин (Kaminiku)',en:'Japanese Tenderloin',p:359,u:'13.6$',ing:'200 гр, с картошкой по-деревенски',al:['beef']},
+ ],
+ 'Бургеры':[
+  {nm:'Чёрный бургер с трюфелем',en:'Truffle Black Burger',p:289,u:'11$',ing:'говядина, айсберг, томат, бри, песто, трюфельный соус, карам. лук',al:['beef','nuts']},
+  {nm:'Чёрный бургер с рваной говядиной',en:'Pulled Beef Black Burger',p:289,u:'11$',ing:'рваная говядина, томат, чеддер, медово-горчичный соус, карам. лук, bbq',al:['beef']},
+  {nm:'Двойной чизбургер',en:'Double Cheese Burger',p:289,u:'11$',ing:'300 гр говядина, айсберг, томат, огурец, чеддер',al:['beef']},
+  {nm:'Бургер с бри и вишнёвым конфитюром',en:'Cherry & Brie Cheese Burger',p:299,u:'11.5$',ing:'150 гр говядина, бри, томат, айсберг, вишнёвый конфитюр',al:['beef']},
+  {nm:'Классический чизбургер',en:'Classic Cheese Burger',p:249,u:'9.5$',ing:'150 гр говядина, айсберг, томат, огурец, чеддер',al:['beef']},
+  {nm:'Хот-дог с крабом',en:'Crab Hot Dog',p:189,u:'7$',ing:'крабовые палочки, икра тобико, моцарелла',al:['sea']},
+  {nm:'Чизбургер ролл',en:'Cheeseburger Wrap',p:199,u:'8$',ing:'говяжий фарш, томат, айсберг, чеддер, огурец, фри, чесночный соус',al:['beef']},
+  {nm:'Кесадилья с курицей',en:'Chicken Quesadilla',p:189,u:'7$',ing:'куриная грудка, болгарский перец, кукуруза, чеддер',al:['chicken']},
+ ],
+ 'Закуски (кухня)':[
+  {nm:'Сырные палочки (моцарелла)',en:'Mozzarella Cheese Sticks',p:119,u:'4.5$',ing:'с малиновым вареньем',al:['vegan']},
+  {nm:'Закуска к крепкому (сало)',en:'Salo Snack Plate',p:129,u:'5$',ing:'сало, хлеб, маринованные черри',al:['pork']},
+  {nm:'Снэк комбо',en:'Snack Combo',p:229,u:'8.6$',ing:'куриные наггетсы, картофель фри, сырные палочки',al:['chicken']},
+ ],
+ 'Закуски (бар)':[
+  {nm:'Арахис с солью',en:'Salted Peanuts',p:49,u:'2$',ing:'',al:['nuts']},
+  {nm:'Чипсы Lay\u2019s',en:'Lay\u2019s Chips',p:69,u:'2.5$',ing:'',al:[]},
+  {nm:'Домашняя вяленая курица',en:'Chicken Jerky',p:79,u:'3$',ing:'50 гр',al:['chicken']},
+  {nm:'Домашняя вяленая говядина',en:'Beef Jerky',p:99,u:'4$',ing:'50 гр',al:['beef']},
+  {nm:'Куриные наггетсы',en:'Chicken Nuggets',p:99,u:'4$',ing:'',al:['chicken']},
+  {nm:'Жареные креветки в кляре',en:'Deep Fried Shrimp',p:129,u:'5$',ing:'',al:['sea']},
+  {nm:'Копчёная рыба лакедра',en:'Smoked Amberjack',p:99,u:'4$',ing:'50 гр',al:['fish']},
+  {nm:'Копчёный тунец',en:'Smoked Tuna',p:119,u:'4.5$',ing:'50 гр',al:['fish']},
+  {nm:'Маринованные черри с чесноком',en:'Pickled Cherry Tomatoes',p:49,u:'2$',ing:'',al:['vegan']},
+  {nm:'Картофель фри с пармезаном',en:'Parmesan French Fries',p:99,u:'4$',ing:'',al:['vegan']},
+  {nm:'Картофель по-деревенски с пармезаном и чесноком',en:'Parmesan Garlic Wedges',p:99,u:'4$',ing:'',al:['vegan']},
+ ],
+ 'Десерты':[
+  {nm:'Шоколадная колбаса',en:'Chocolate Salami',p:109,u:'4$',ing:'«как в детстве»',al:[]},
+  {nm:'Классические домашние сырники',en:'Classic Syrniki',p:129,u:'5$',ing:'со сметаной и малиновым вареньем',al:[]},
+  {nm:'Домашние кокосовые сырники',en:'Coconut Syrniki',p:129,u:'5$',ing:'со сметаной и малиновым вареньем',al:[]},
+  {nm:'Круассан с манго и маракуйей',en:'Cream Cheese Mango & Passion Croissant',p:149,u:'5.6$',ing:'ванильный сливочный крем, манго, маракуйя',al:[]},
+  {nm:'Круассан с вишней',en:'Cream Cheese & Cherry Croissant',p:149,u:'5.6$',ing:'ванильный сливочный крем, вишня',al:[]},
+  {nm:'Анна Павлова',en:'Classic Pavlova',p:129,u:'5$',ing:'манго, маракуйя, сливочный крем',al:[]},
+  {nm:'Ягодная Павлова',en:'Berry Pavlova',p:129,u:'5$',ing:'вишнёвый конфитюр, малиновый джем, сливочный крем',al:[]},
+  {nm:'Фруктовая тарелка',en:'Seasonal Fruit Plate',p:149,u:'5.7$',ing:'',al:['vegan']},
+  {nm:'Классический чизкейк',en:'Classic Cheesecake',p:129,u:'5$',ing:'с соусом из маракуйи ИЛИ малиновым джемом',al:[]},
+  {nm:'Шоколадный брауни с карамелью',en:'Vanilla Cream & Caramel Brownie',p:129,u:'5$',ing:'брауни, ванильный крем, солёная карамель, шоколадный соус, арахис',al:['nuts']},
+ ],
+};
+
+/* ===== НАПИТКИ (отдельно: цены/состав, без аллергенов кухни) ===== */
+const DRINKS = {
+ 'Кофе':[
+  {nm:'Американо',p:49,u:'2$',ing:'iced / hot'},
+  {nm:'Капучино',p:59,u:'2.5$',ing:'iced / hot'},
+  {nm:'Bumble',p:69,u:'2.5$',ing:'кофе + апельсиновый сок'},
+ ],
+ 'Чай':[
+  {nm:'Classic Tea (улун, зелёный, чёрный, эрл грей, жасмин)',p:119,u:'4.5$',ing:''},
+  {nm:'Signature: Passion Kiwi',p:129,u:'5$',ing:'киви, маракуйя, жасминовый чай'},
+  {nm:'Signature: Wild Berries',p:129,u:'5$',ing:'смородина, малина, гвоздика, чёрный чай'},
+  {nm:'Signature: Orange',p:129,u:'5$',ing:'апельсин, чёрный чай'},
+  {nm:'Signature: Citrus Lemongrass',p:129,u:'5$',ing:'лемонграсс, апельсин, лайм, мята, зелёный чай'},
+  {nm:'Ice Tea: Hibiscus Elderflower',p:89,u:'3.5$',ing:'каркаде, бузина, чиа'},
+ ],
+ 'Смузи / Шейки':[
+  {nm:'Смузи Tropical Passion',p:99,u:'4$',ing:'манго, ананас, маракуйя, йогурт, мёд'},
+  {nm:'Смузи Berry Burst',p:99,u:'4$',ing:'клубника, малина, шелковица, банан, йогурт, мёд'},
+  {nm:'Смузи Super Green',p:99,u:'4$',ing:'манго, алоэ, шпинат, йогурт, спирулина, мёд, имбирь, лайм'},
+  {nm:'Милкшейк Tropical',p:99,u:'4$',ing:'маракуйя, манго, молоко, ванильное мороженое'},
+  {nm:'Милкшейк Berries',p:99,u:'4$',ing:'сезонные ягоды, молоко, ванильное мороженое'},
+ ],
+ 'Соки / Лимонады / Софт':[
+  {nm:'Фреши (апельсин, лайм, арбуз, маракуйя, яблоко, кокос)',p:59,u:'2.5$',ing:''},
+  {nm:'Лимонад 1 л (манго-маракуйя, яблоко-карамель, мохито, frutty sour, базилик-ягоды)',p:169,u:'6.5$',ing:'0.3 л — 89K'},
+  {nm:'Софт (Coke, Sprite, Soda, Tonic, Ginger Ale, Box Juice, Water)',p:49,u:'2$',ing:''},
+  {nm:'Jermuk минеральная вода',p:79,u:'3$',ing:''},
+  {nm:'Red Bull',p:69,u:'2.5$',ing:''},
+ ],
+ 'Пиво и сидр':[
+  {nm:'Heineken 0% 0.25',p:49,u:'2$',ing:''},
+  {nm:'Tiger',p:59,u:'2.5$',ing:''},
+  {nm:'Hoegaarden',p:79,u:'3$',ing:''},
+  {nm:'Corona',p:99,u:'4$',ing:''},
+  {nm:'Magners Apple Cider',p:99,u:'4$',ing:''},
+ ],
+ 'Крафт и разливное':[
+  {nm:'Sapporo 0.3',p:59,u:'2.5$',ing:''},
+  {nm:'Sapporo 0.6',p:109,u:'4.5$',ing:''},
+  {nm:'Sapporo Dark 0.3',p:79,u:'3$',ing:''},
+  {nm:'Sapporo Dark 0.6',p:149,u:'5.6$',ing:''},
+  {nm:'East West Pale Ale',p:89,u:'3.5$',ing:''},
+  {nm:'East West Summer',p:89,u:'3.5$',ing:''},
+  {nm:'East West Pilsner',p:89,u:'3.5$',ing:''},
+  {nm:'East West IPA',p:99,u:'4$',ing:''},
+  {nm:'Башня Sapporo 2.5 л',p:399,u:'15$',ing:''},
+  {nm:'Башня Sapporo Dark 2.5 л',p:579,u:'22$',ing:''},
+  {nm:'Башня Sapporo + снэк комбо',p:589,u:'22$',ing:'было 628K'},
+  {nm:'Башня Sapporo Dark + снэк комбо',p:759,u:'29$',ing:'было 808K'},
+ ],
+ 'Виски (50мл)':[
+  {nm:'Evan Williams',p:109,u:'4$',ing:'бутылка 1549K'},
+  {nm:'Jameson',p:119,u:'4.5$',ing:'бутылка 1549K'},
+  {nm:'Mellow Corn',p:119,u:'4.5$',ing:'бутылка 1599K'},
+  {nm:'Jack Daniels',p:129,u:'5$',ing:'бутылка 1699K'},
+  {nm:'Makers Mark',p:149,u:'5.5$',ing:'бутылка 2049K'},
+  {nm:'Laphroaig 10 y.o',p:289,u:'11$',ing:'бутылка 3999K'},
+  {nm:'Macallan 12',p:369,u:'14$',ing:'бутылка 4999K'},
+  {nm:'Glenfiddich',p:399,u:'15$',ing:'бутылка 5399K'},
+  {nm:'Hibiki Harmony',p:699,u:'26.5$',ing:'бутылка 9499K'},
+ ],
+ 'Джин (50мл)':[
+  {nm:'Gordons',p:109,u:'4$',ing:'бутылка 1449K'},
+  {nm:'Bombay',p:119,u:'5$',ing:'бутылка 1649K'},
+  {nm:'Hendricks',p:229,u:'9$',ing:'бутылка 2999K'},
+  {nm:'Monkey 47',p:349,u:'13$',ing:'бутылка 3349K'},
+ ],
+ 'Водка (50мл)':[
+  {nm:'Absolut',p:99,u:'4$',ing:'бутылка 1199K'},
+  {nm:'Tito\u2019s',p:119,u:'5$',ing:'бутылка 1499K'},
+  {nm:'Grey Goose',p:139,u:'5$',ing:'бутылка 1799K'},
+ ],
+ 'Текила (50мл)':[
+  {nm:'Jose Cuervo Silver',p:109,u:'4$',ing:'бутылка 1499K'},
+  {nm:'Lunazul Reposado',p:139,u:'5$',ing:'бутылка 1699K'},
+  {nm:'1800 Silver',p:199,u:'7.5$',ing:'бутылка 2799K'},
+  {nm:'1800 Reposado',p:229,u:'9$',ing:'бутылка 3399K'},
+ ],
+ 'Ром (50мл)':[
+  {nm:'Captain Morgan (black)',p:99,u:'4$',ing:'бутылка 1249K'},
+  {nm:'Flor de Cana 4 yo (white)',p:99,u:'4$',ing:'бутылка 1259K'},
+  {nm:'Flor de Cana 7 yo (gold)',p:139,u:'5$',ing:'бутылка 1799K'},
+  {nm:'Kraken (dark spices)',p:179,u:'7$',ing:'бутылка 2359K'},
+ ],
+ 'Ликёры и вермут (50мл)':[
+  {nm:'Jagermeister',p:119,u:'4.5$',ing:'бутылка 1199K'},
+  {nm:'Martini (rosso/bianco/extra dry)',p:119,u:'4.5$',ing:'бутылка 999K'},
+  {nm:'Campari',p:129,u:'5$',ing:'бутылка 1799K'},
+  {nm:'Bailey\u2019s',p:129,u:'5$',ing:'бутылка 1799K'},
+  {nm:'Absinthe',p:149,u:'5.5$',ing:'бутылка 2049K'},
+  {nm:'Drambuie',p:159,u:'6$',ing:'бутылка 2099K'},
+ ],
+ 'Рисовое / Игристое / Вино':[
+  {nm:'Soju Fresh 360мл',p:149,u:'5.7$',ing:''},
+  {nm:'Soju Peach 360мл',p:149,u:'5.7$',ing:''},
+  {nm:'Delafinca Brut (бокал)',p:149,u:'5.7$',ing:'Испания · бутылка 799K'},
+  {nm:'Tintoretto Prosecco',p:999,u:'38$',ing:'Италия'},
+  {nm:'Белое Aleixo Vinho Branco 250мл',p:179,u:'7$',ing:'Португалия'},
+  {nm:'Pedro Luis Sauvignon Blanc',p:799,u:'30.5$',ing:'Испания'},
+  {nm:'Terre Forti Pinot Grigio',p:899,u:'34$',ing:'Италия'},
+  {nm:'Torres Vina Esmeralda',p:1099,u:'42$',ing:'Испания, п/сухое'},
+  {nm:'Красное Aleixo Vinho Tinto 250мл',p:179,u:'7$',ing:'Португалия'},
+  {nm:'Terre Forti Merlot',p:749,u:'28.5$',ing:'Италия'},
+  {nm:'Bodega Argento Malbec',p:999,u:'38$',ing:'Аргентина'},
+ ],
+ 'Шоты':[
+  {nm:'Boyarskiy',p:99,u:'4$',ing:'водка smirnoff, гренадин, табаско'},
+  {nm:'Passion Bon',p:99,u:'4$',ing:'бурбон jim beam, маракуйя, сироп маракуйи'},
+  {nm:'Green Mexican',p:99,u:'4$',ing:'текила jose cuervo, midori, лайм'},
+  {nm:'B52',p:119,u:'4.5$',ing:'kahlua, baileys, cointreau'},
+  {nm:'B53',p:129,u:'5$',ing:'kahlua, baileys, абсент'},
+ ],
+};
+
+/* ===== КОКТЕЙЛИ (с базовым алкоголем для викторины) ===== */
+const COCKTAILS = {
+ 'Классические коктейли':[
+  {nm:'Old Fashioned',p:179,u:'6.5$',base:'Виски',ing:'виски, сахарный сироп, ангостура'},
+  {nm:'Mojito (классич./маракуйя)',p:189,u:'7$',base:'Ром',ing:'ром, лайм, сироп, мята, сода'},
+  {nm:'Margarita',p:189,u:'7$',base:'Текила',ing:'текила, трипл сек, лайм, сироп'},
+  {nm:'Negroni',p:189,u:'7$',base:'Джин',ing:'джин, вермут, кампари'},
+  {nm:'Cosmopolitan',p:189,u:'7$',base:'Водка',ing:'водка, трипл сек, лайм, клюквенный сок'},
+  {nm:'Sex on the Beach',p:189,u:'7$',base:'Водка',ing:'водка, апельсин. сок, клюква, персиковый ликёр'},
+  {nm:'Gin Fizz',p:189,u:'7$',base:'Джин',ing:'джин, белок, лайм, сода, сироп'},
+  {nm:'Pina Colada',p:199,u:'7.5$',base:'Ром',ing:'ром, malibu, кокос. сироп, ананас, лайм'},
+  {nm:'Whiskey Sour',p:199,u:'7.5$',base:'Виски',ing:'виски, сироп, белок, лайм'},
+  {nm:'New York Sour',p:199,u:'7.5$',base:'Виски',ing:'виски, красное вино, мёд, лайм'},
+  {nm:'Mai Tai',p:199,u:'7.5$',base:'Ром',ing:'ром, трипл сек, амаретто, ананас, апельсин, сироп, лайм'},
+  {nm:'Long Island Tea',p:219,u:'8$',base:'Микс (текила/водка/джин/ром)',ing:'текила, водка, джин, ром, трипл сек, лайм, кола'},
+  {nm:'Aperol Spritz',p:229,u:'8.5$',base:'Апероль/игристое',ing:'игристое, апероль, сода, апельсин'},
+ ],
+ 'Авторские коктейли (219K)':[
+  {nm:'Tiki Summer',p:219,u:'8$',base:'Ром',ing:'silver & gold ром, malibu, банан. ликёр, яблоко/апельсин/лайм, гренадин'},
+  {nm:'Blue Moon',p:219,u:'8$',base:'Джин',ing:'джин, кокос. сироп, блю кюрасао, кокос. крем, лайм'},
+  {nm:'Spicy Passion',p:219,u:'8$',base:'Текила',ing:'текила, пюре маракуйи, табаско, сироп'},
+  {nm:'Campfire',p:219,u:'8$',base:'Джин',ing:'джин, трипл сек, фундучный сироп, ангостура, лайм'},
+  {nm:'Talking to the Moon',p:219,u:'8$',base:'Кашаса',ing:'кашаса, martini bianco, абсент, ангостура, сироп красн. апельсина'},
+  {nm:'Lipton Ice Tea',p:219,u:'8$',base:'Джин',ing:'джин, игристое, сироп эрл грей, лайм'},
+  {nm:'Basil Blast',p:219,u:'8$',base:'Джин',ing:'джин, лайм, сироп, базиликовый сироп, белок'},
+  {nm:'Mulled Wine (глинтвейн)',p:219,u:'8$',base:'Красное вино',ing:'красное вино, корица, апельсин, мёд, анис, лайм, гвоздика'},
+  {nm:'Mango Margarita',p:219,u:'8$',base:'Текила',ing:'текила, трипл сек, пюре манго, сироп, лайм'},
+  {nm:'South Wings',p:219,u:'8$',base:'Ром',ing:'silver ром, midori, ананас, маракуйя, кокос. сироп, лайм'},
+  {nm:'Berries Crash',p:219,u:'8$',base:'Джин',ing:'martini rosso, джин, лайм, raspberry crash, клюква'},
+  {nm:'Aperol Mango Sour',p:219,u:'8$',base:'Джин',ing:'джин, апероль, лайм, сироп, белок, пюре манго'},
+ ],
+ 'Авторские коктейли (249K)':[
+  {nm:'Hugo',p:249,u:'9.5$',base:'St. Germain/игристое',ing:'st. germain, игристое, сода, мята, лайм'},
+  {nm:'Bloody Mary',p:249,u:'9.5$',base:'Водка',ing:'водка, томатный микс, бекон, корнишоны'},
+  {nm:'Bartender\u2019s Choice',p:229,u:'9$',base:'На выбор гостя',ing:'выбери алкоголь — бармен сделает коктейль'},
+ ],
+};
+
+const SHISHA = [
+ {nm:'Premium (Darkside, Must Have, Daily Hookah, Spectrum, Black Burn, Duft, Naш, Adalya, Afzal)',p:569,u:'21.6$',ing:'время курения ~60 мин'},
+ {nm:'Express',p:459,u:'17.4$',ing:'40 мин без замены углей'},
+ {nm:'Tangiers',p:629,u:'24$',ing:''},
+ {nm:'Fruit Based (на фрукте)',p:849,u:'32.2$',ing:''},
+ {nm:'Deus Parfume / Bonche',p:849,u:'32.2$',ing:''},
+];
+
+/* собрать всё для study */
+const ALLCATS = {...MENU, 'Напитки и бар':flatten(DRINKS), 'Коктейли':flatten(COCKTAILS), 'Кальяны':SHISHA};
+function flatten(obj){let r=[];for(const k in obj){obj[k].forEach(x=>r.push({...x,_sub:k}))}return r;}
+
+/* ============ STUDY UI ============ */
+function buildLegend(){
+  const allerg=['nuts','sea'];
+  const cats=['chicken','pork','beef','fish','duck','vegan'];
+  const mk=k=>`<span class="pill"><span class="dot ${ADOT[k]}"></span>${A[k]}</span>`;
+  document.getElementById('legend').innerHTML =
+    `<div class="legrow"><span class="legttl warn">⚠️ Аллергены</span>${allerg.map(mk).join('')}</div>`+
+    `<div class="legrow"><span class="legttl">Категории состава (не аллергены)</span>${cats.map(mk).join('')}</div>`;
+}
+let curCat = Object.keys(ALLCATS)[0];
+function buildCatbar(){
+  document.getElementById('catbar').innerHTML = Object.keys(ALLCATS).map(c=>
+    `<div class="chip ${c===curCat?'active':''}" onclick="pickCat('${c.replace(/'/g,"\\'")}')">${c}</div>`).join('');
+}
+function pickCat(c){curCat=c;buildCatbar();renderMenu();window.scrollTo({top:0,behavior:'smooth'});}
+function renderMenu(){
+  const items = ALLCATS[curCat];
+  let html='', lastSub=null;
+  items.forEach(it=>{
+    if(it._sub && it._sub!==lastSub){html+=`<div class="sechead">${it._sub}</div>`;lastSub=it._sub;}
+    const baseTag = it.base?`<span class="tag" style="color:var(--gold)">🍸 ${it.base}</span>`:'';
+    let allergTags='';
+    if(Array.isArray(it.al)){
+      const aller = it.al.filter(a=>a==='nuts'||a==='sea');
+      const cats  = it.al.filter(a=>a!=='nuts'&&a!=='sea');
+      if(aller.length) allergTags += aller.map(a=>`<span class="tag tag-al"><span class="dot ${ADOT[a]}"></span>${A[a].replace(/^[^ ]+ /,'')}</span>`).join('');
+      else allergTags += `<span class="tag tag-ok">✅ без аллергенов</span>`;
+      allergTags += cats.map(a=>`<span class="tag"><span class="dot ${ADOT[a]}"></span>${A[a].replace(/^[^ ]+ /,'')}</span>`).join('');
+    }
+    const priceStr = (it.p==null)
+      ? `<div class="price" style="color:var(--muted);font-size:14px">уточни</div>`
+      : `<div class="price">${it.p}K</div><div class="usd">~${it.u}</div>`;
+    html+=`<div class="item"><div class="top">
+      <div><div class="nm">${it.nm}</div>${it.en?`<div class="en">${it.en}</div>`:''}</div>
+      <div style="text-align:right">${priceStr}</div>
+    </div>
+    ${it.ing?`<div class="ing">${it.ing}</div>`:''}
+    ${(allergTags||baseTag)?`<div class="tags">${baseTag}${allergTags}</div>`:''}</div>`;
+  });
+  document.getElementById('menuList').innerHTML = html;
+}
+
+/* ============ TAB SWITCH ============ */
+function setTab(t){
+  document.getElementById('tabStudy').classList.toggle('active',t==='study');
+  document.getElementById('tabQuiz').classList.toggle('active',t==='quiz');
+  document.getElementById('study').style.display = t==='study'?'block':'none';
+  document.getElementById('quiz').style.display = t==='quiz'?'block':'none';
+  if(t==='quiz') showQuizSetup();
+  window.scrollTo(0,0);
+}
+
+/* ============ QUIZ ENGINE ============ */
+const Q = document.getElementById('quiz');
+let quizMode='all', quizQuestions=[], qIdx=0, score=0, answered=false, selected=[], listMatched=new Set();
+
+function showQuizSetup(){
+  Q.innerHTML = `
+   <div class="setup">
+     <h2>Тренажёр</h2>
+     <p>10 вопросов. Выбери, что отрабатывать.</p>
+     <div class="modegrid">
+       <div class="modebtn ${quizMode==='all'?'on':''}" onclick="setMode('all')"><div class="t">🎲 Всё подряд</div><div class="d">все типы вопросов вперемешку</div></div>
+       <div class="modebtn ${quizMode==='list'?'on':''}" onclick="setMode('list')"><div class="t">✍️ Назови сам</div><div class="d">впиши салаты, коктейли на джине и т.д. · опечатки не считаются</div></div>
+       <div class="modebtn ${quizMode==='allergen'?'on':''}" onclick="setMode('allergen')"><div class="t">⚠️ Аллергены</div><div class="d">только орехи и морепродукты</div></div>
+       <div class="modebtn ${quizMode==='category'?'on':''}" onclick="setMode('category')"><div class="t">🥩 Состав / мясо</div><div class="d">где свинина, говядина, курица, рыба + состав</div></div>
+       <div class="modebtn ${quizMode==='cocktail'?'on':''}" onclick="setMode('cocktail')"><div class="t">🍸 Коктейли</div><div class="d">база и состав коктейлей</div></div>
+       <div class="modebtn ${quizMode==='price'?'on':''}" onclick="setMode('price')"><div class="t">💵 Цены</div><div class="d">цены блюд и кальянов</div></div>
+     </div>
+     <button class="btn gold" onclick="startQuiz()">Начать →</button>
+     <div class="note">У бара <b>аллергены = только орехи и морепродукты</b> (креветки, краб). Курица, свинина, говядина, рыба, утка — это пометки по составу, не аллергены.</div>
+   </div>`;
+}
+function setMode(m){quizMode=m;showQuizSetup();}
+
+/* пулы данных */
+const FOODFLAT = (()=>{let r=[];for(const c in MENU)MENU[c].forEach(x=>r.push({...x,cat:c}));return r;})();
+const COCKFLAT = (()=>{let r=[];for(const c in COCKTAILS)COCKTAILS[c].forEach(x=>r.push({...x,cat:c}));return r;})();
+const PRICEABLE = (()=>{let r=[];for(const c in ALLCATS)ALLCATS[c].forEach(x=>{if(x.p!=null)r.push(x)});return r;})();
+const ALLERGEN_KEYS=['pork','beef','chicken','nuts','sea','fish','vegan','duck'];
+
+function rand(a){return a[Math.floor(Math.random()*a.length)]}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function sample(a,n){return shuffle(a).slice(0,n)}
+
+/* генераторы вопросов */
+const TRUE_ALLERGENS=['nuts','sea'];
+const CAT_LBL={pork:'свинина',beef:'говядина',chicken:'курица',fish:'рыба'};
+
+function genAllergenWhich(){ // какие аллергены (орехи/морепродукты) в блюде
+  const f = rand(FOODFLAT);
+  const correct = f.al.filter(a=>TRUE_ALLERGENS.includes(a));
+  const opts=[
+    {t:A.nuts,ok:correct.includes('nuts')},
+    {t:A.sea,ok:correct.includes('sea')},
+    {t:'Нет аллергенов',ok:correct.length===0}
+  ];
+  return {type:'multi',label:'Аллергены',q:`Какие аллергены в «<span class="hl">${f.nm}</span>»? (орехи / морепродукты)`,
+    opts,expl:`«${f.nm}»: ${correct.length?correct.map(c=>A[c]).join(', '):'нет аллергенов (орехов/морепродуктов)'}. Состав: ${f.ing||'—'}.`};
+}
+function genAllergenWhere(){ // в каком блюде есть орехи/морепродукты
+  const key = rand(TRUE_ALLERGENS);
+  const lbl = key==='nuts'?'орехи':'морепродукты';
+  const ans = rand(FOODFLAT.filter(x=>x.al.includes(key)));
+  const without = FOODFLAT.filter(x=>!x.al.includes(key));
+  const opts = shuffle([ans, ...sample(without,3)]);
+  return {type:'single',label:'Аллергены',q:`В каком блюде есть <span class="hl">${lbl}</span>?`,
+    opts:opts.map(o=>({t:o.nm,ok:o===ans})),expl:`«${ans.nm}» — ${A[key]}. Состав: ${ans.ing||'—'}.`};
+}
+function genAllergenYesNo(){
+  const f = rand(FOODFLAT);
+  const key = rand(TRUE_ALLERGENS);
+  const lbl = key==='nuts'?'орехи':'морепродукты';
+  const has = f.al.includes(key);
+  return {type:'single',label:'Аллергены',q:`Есть ли в «<span class="hl">${f.nm}</span>» ${lbl}?`,
+    opts:shuffle([{t:'Да',ok:has},{t:'Нет',ok:!has}]),
+    expl:`${has?'Да':'Нет'}. «${f.nm}» — состав: ${f.ing||'—'}.`};
+}
+function genCatWhere(){ // в каком блюде свинина/говядина/курица/рыба
+  const key = rand(['pork','beef','chicken','fish']);
+  const ans = rand(FOODFLAT.filter(x=>x.al.includes(key)));
+  const without = FOODFLAT.filter(x=>!x.al.includes(key));
+  const opts = shuffle([ans, ...sample(without,3)]);
+  return {type:'single',label:'Состав',q:`В каком блюде есть <span class="hl">${CAT_LBL[key]}</span>?`,
+    opts:opts.map(o=>({t:o.nm,ok:o===ans})),expl:`«${ans.nm}» — ${A[key]}. Состав: ${ans.ing||'—'}.`};
+}
+function genCatYesNo(){
+  const f = rand(FOODFLAT);
+  const key = rand(['pork','beef','chicken','fish']);
+  const has = f.al.includes(key);
+  return {type:'single',label:'Состав',q:`Есть ли в «<span class="hl">${f.nm}</span>» ${CAT_LBL[key]}?`,
+    opts:shuffle([{t:'Да',ok:has},{t:'Нет',ok:!has}]),
+    expl:`${has?'Да':'Нет'}. «${f.nm}» — состав: ${f.ing||'—'}.`};
+}
+function genCockBase(){
+  const c = rand(COCKFLAT.filter(x=>x.base && !x.base.includes('выбор') && !x.base.includes('Микс')));
+  const bases=['Джин','Ром','Водка','Текила','Виски'];
+  const wrong = bases.filter(b=>!c.base.includes(b));
+  const opts = shuffle([{t:c.base,ok:true},...sample(wrong,3).map(w=>({t:w,ok:false}))]);
+  return {type:'single',label:'Коктейли',q:`На каком алкоголе коктейль <span class="hl">${c.nm}</span>?`,
+    opts,expl:`${c.nm}: ${c.ing}.`};
+}
+function genCockIng(){
+  const c = rand(COCKFLAT.filter(x=>x.ing.includes(',')));
+  const realParts = c.ing.split(/[,·]/).map(s=>s.trim()).filter(Boolean);
+  const good = rand(realParts);
+  // плохой ингредиент из другого коктейля
+  let bad;
+  for(let i=0;i<20;i++){const o=rand(COCKFLAT);const p=rand(o.ing.split(/[,·]/).map(s=>s.trim()).filter(Boolean));if(!c.ing.includes(p)){bad=p;break}}
+  bad = bad||'кола';
+  return {type:'single',label:'Коктейли',q:`Что из этого входит в <span class="hl">${c.nm}</span>?`,
+    opts:shuffle([{t:good,ok:true},{t:bad,ok:false},...sample(['маракуйя','кофе','имбирь','огурец','базилик'].filter(x=>!c.ing.includes(x)),2).map(x=>({t:x,ok:false}))]),
+    expl:`${c.nm}: ${c.ing}.`};
+}
+function genPrice(){
+  const it = rand(PRICEABLE);
+  const prices = new Set([it.p]);
+  while(prices.size<4){const d=rand(PRICEABLE).p; if(d!==it.p) prices.add(d);}
+  const opts = shuffle([...prices]).map(p=>({t:p+'K',ok:p===it.p}));
+  return {type:'single',label:'Цены',q:`Сколько стоит <span class="hl">${it.nm}</span>?`,
+    opts,expl:`${it.nm} — ${it.p}K (~${it.u}).`};
+}
+function genPriceReverse(){
+  const it = rand(PRICEABLE);
+  const others = PRICEABLE.filter(x=>x.p!==it.p);
+  const opts = shuffle([it, ...sample(others,3)]).map(o=>({t:o.nm,ok:o===it}));
+  return {type:'single',label:'Цены',q:`Что из этого стоит <span class="hl">${it.p}K</span>?`,
+    opts,expl:`${it.nm} — ${it.p}K (~${it.u}).`};
+}
+function genFoodIng(){
+  const f = rand(FOODFLAT.filter(x=>x.ing && x.ing.includes(',')));
+  const real = f.ing.split(/[,·]/).map(s=>s.trim()).filter(Boolean);
+  const good = rand(real);
+  const fakes=['креветки','тунец','бекон','арахис','маракуйя','грибы','сало','кукуруза','оливки','тофу','лосось','кешью'].filter(x=>!f.ing.toLowerCase().includes(x));
+  const opts = shuffle([{t:good,ok:true},...sample(fakes,3).map(x=>({t:x,ok:false}))]);
+  return {type:'single',label:'Состав',q:`Что входит в «<span class="hl">${f.nm}</span>»?`,
+    opts,expl:`«${f.nm}»: ${f.ing}.`};
+}
+function genAllergenWhereNot(){
+  const key = rand(TRUE_ALLERGENS);
+  const lbl = key==='nuts'?'орехов':'морепродуктов';
+  const ans = rand(FOODFLAT.filter(x=>!x.al.includes(key)));
+  const withK = FOODFLAT.filter(x=>x.al.includes(key));
+  const opts = shuffle([ans, ...sample(withK,3)]);
+  return {type:'single',label:'Аллергены',q:`В каком блюде <span class="hl">НЕТ ${lbl}</span>?`,
+    opts:opts.map(o=>({t:o.nm,ok:o===ans})),expl:`«${ans.nm}» — без ${lbl}. Состав: ${ans.ing||'—'}.`};
+}
+const BASE_LBL={'Джин':'джине','Ром':'роме','Водка':'водке','Текила':'текиле','Виски':'виски'};
+function genCockByBase(){
+  const base = rand(['Джин','Ром','Водка','Текила','Виски']);
+  const withB = COCKFLAT.filter(x=>x.base.includes(base));
+  const without = COCKFLAT.filter(x=>!x.base.includes(base));
+  const ans = rand(withB);
+  const opts = shuffle([ans, ...sample(without,3)]);
+  return {type:'single',label:'Коктейли',q:`Какой из этих коктейлей на <span class="hl">${BASE_LBL[base]}</span>?`,
+    opts:opts.map(o=>({t:o.nm,ok:o===ans})),expl:`${ans.nm} — база: ${ans.base}. Состав: ${ans.ing}.`};
+}
+function genShisha(){
+  if(Math.random()<0.55){
+    const s = rand(SHISHA);
+    const arr=new Set([s.p]); while(arr.size<4){const d=rand(SHISHA).p; if(d!==s.p)arr.add(d);}
+    let a=[...arr]; while(a.length<4){const d=rand(PRICEABLE).p; if(!a.includes(d))a.push(d);}
+    const name=s.nm.split(' (')[0];
+    return {type:'single',label:'Кальяны',q:`Сколько стоит кальян <span class="hl">${name}</span>?`,
+      opts:shuffle(a).map(p=>({t:p+'K',ok:p===s.p})),expl:`${name} — ${s.p}K (~${s.u}).`};
+  } else {
+    const maxP=Math.max(...SHISHA.map(s=>s.p));
+    const ans=rand(SHISHA.filter(s=>s.p===maxP));
+    const others=SHISHA.filter(s=>s.p!==maxP);
+    const opts=shuffle([ans,...sample(others,3)]);
+    return {type:'single',label:'Кальяны',q:`Какой кальян <span class="hl">самый дорогой</span>?`,
+      opts:opts.map(o=>({t:o.nm.split(' (')[0],ok:o.p===maxP})),expl:`Самый дорогой — ${ans.nm.split(' (')[0]} (${maxP}K).`};
+  }
+}
+
+/* ===== «Назови сам»: списки + нечёткое сравнение ===== */
+const LIST_SETS=[
+ {label:'Коктейли',min:5,prompt:'Назови коктейли на ДЖИНЕ',items:[
+   {label:'Negroni',aliases:['negroni','негрони']},
+   {label:'Gin Fizz',aliases:['gin fizz','джин физ','физ','fizz']},
+   {label:'Blue Moon',aliases:['blue moon','блю мун','блюмун','блумун']},
+   {label:'Campfire',aliases:['campfire','кэмпфайр','кампфаер','кемпфаер','кэмпфаер']},
+   {label:'Lipton Ice Tea',aliases:['lipton ice tea','lipton','липтон','липтон айс']},
+   {label:'Basil Blast',aliases:['basil blast','базил бласт','бэзил бласт','базил','blast']},
+   {label:'Berries Crash',aliases:['berries crash','бэрис краш','берриз краш','берис','краш','crash']},
+   {label:'Aperol Mango Sour',aliases:['aperol mango sour','апероль манго','aperol mango','манго сауэр']},
+   {label:'Long Island Tea',aliases:['long island','лонг исланд','лонг айленд','long island tea','лонг исланд ти','лонг','исланд','island']},
+ ]},
+ {label:'Коктейли',min:5,prompt:'Назови коктейли на РОМЕ',items:[
+   {label:'Mojito',aliases:['mojito','мохито']},
+   {label:'Pina Colada',aliases:['pina colada','пина колада','пинаколада','колада']},
+   {label:'Mai Tai',aliases:['mai tai','май тай','майтай']},
+   {label:'Tiki Summer',aliases:['tiki summer','тики саммер','тики','tiki']},
+   {label:'South Wings',aliases:['south wings','саус вингс','саусвингс','саус','wings']},
+   {label:'Long Island Tea',aliases:['long island','лонг исланд','лонг айленд','long island tea','лонг исланд ти','лонг','исланд','island']},
+ ]},
+ {label:'Коктейли',min:3,prompt:'Назови коктейли на ВОДКЕ',items:[
+   {label:'Cosmopolitan',aliases:['cosmopolitan','космополитан','космо','cosmo']},
+   {label:'Sex on the Beach',aliases:['sex on the beach','секс он зе бич','секс на пляже','sex on beach']},
+   {label:'Bloody Mary',aliases:['bloody mary','блади мери','блади мэри','кровавая мэри','мэри']},
+   {label:'Long Island Tea',aliases:['long island','лонг исланд','лонг айленд','long island tea','лонг исланд ти','лонг','исланд','island']},
+ ]},
+ {label:'Коктейли',min:3,prompt:'Назови коктейли на ТЕКИЛЕ',items:[
+   {label:'Margarita',aliases:['margarita','маргарита']},
+   {label:'Mango Margarita',aliases:['mango margarita','манго маргарита','манго марг']},
+   {label:'Spicy Passion',aliases:['spicy passion','спайси пэшн','спайси','спайси пассион','passion']},
+   {label:'Long Island Tea',aliases:['long island','лонг исланд','лонг айленд','long island tea','лонг исланд ти','лонг','исланд','island']},
+ ]},
+ {label:'Коктейли',min:3,prompt:'Назови коктейли на ВИСКИ',items:[
+   {label:'Old Fashioned',aliases:['old fashioned','олд фэшн','олд фешен','олдфэшн','фэшн']},
+   {label:'Whiskey Sour',aliases:['whiskey sour','виски сауэр','виски сауер']},
+   {label:'New York Sour',aliases:['new york sour','нью йорк сауэр','нью йорк','ньюйорк']},
+ ]},
+ {label:'Меню',min:5,prompt:'Назови салаты из меню',items:[
+   {label:'Салат Цезарь',aliases:['цезарь','caesar','цезар']},
+   {label:'Тропический с креветками и манго',aliases:['тропический','креветки манго','креветками','тропический манго']},
+   {label:'Салат с тунцом и морским виноградом',aliases:['тунец','тунцом','морской виноград','tuna']},
+   {label:'Салат с лососем и авокадо',aliases:['лосось','лососем','семга','salmon','авокадо']},
+   {label:'Капрезе с песто',aliases:['капрезе','caprese']},
+   {label:'Цитрусовый с копчёной уткой',aliases:['утка','уткой','цитрусовый','копченая утка','duck']},
+ ]},
+ {label:'Меню',min:3,prompt:'Назови супы из меню',items:[
+   {label:'Куриный суп с вермишелью',aliases:['куриный','курица','вермишель','chicken soup']},
+   {label:'Грибной крем-суп',aliases:['грибной','грибы','mushroom','крем суп']},
+   {label:'Томатный суп',aliases:['томатный','томат','помидор','tomato']},
+ ]},
+ {label:'Меню',min:4,prompt:'Назови бургеры из меню',items:[
+   {label:'Чёрный бургер с трюфелем',aliases:['трюфель','труфель','truffle','черный с трюфелем']},
+   {label:'Чёрный бургер с рваной говядиной',aliases:['рваная говядина','рваной','pulled','пулд','рваная']},
+   {label:'Двойной чизбургер',aliases:['двойной','double','двойной чизбургер']},
+   {label:'Бургер с бри и вишнёвым конфитюром',aliases:['бри','вишневым','cherry','конфитюр','вишня бри']},
+   {label:'Классический чизбургер',aliases:['классический чизбургер','классический','classic']},
+ ]},
+ {label:'Меню',min:5,prompt:'Назови десерты из меню',items:[
+   {label:'Шоколадная колбаса',aliases:['шоколадная колбаса','колбаса','salami']},
+   {label:'Классические сырники',aliases:['классические сырники','классические','сырники']},
+   {label:'Кокосовые сырники',aliases:['кокосовые сырники','кокосовые']},
+   {label:'Круассан с манго и маракуйей',aliases:['круассан с манго','круассан манго','манго маракуйя']},
+   {label:'Круассан с вишней',aliases:['круассан с вишней','круассан вишня','вишневый круассан']},
+   {label:'Анна Павлова',aliases:['анна павлова','классическая павлова','classic pavlova','анна']},
+   {label:'Ягодная Павлова',aliases:['ягодная павлова','ягодная','berry pavlova']},
+   {label:'Фруктовая тарелка',aliases:['фруктовая тарелка','фрукты','фруктовая','fruit plate']},
+   {label:'Классический чизкейк',aliases:['чизкейк','cheesecake']},
+   {label:'Шоколадный брауни',aliases:['брауни','brownie','шоколадный брауни']},
+ ]},
+ {label:'Аллергены',min:5,prompt:'Назови блюда со СВИНИНОЙ',items:[
+   {label:'Блины с ветчиной и сыром',aliases:['блины','ветчина','ham']},
+   {label:'Овсянка с беконом',aliases:['овсянка с беконом','бекон','блю чиз']},
+   {label:'Паста карбонара',aliases:['карбонара','carbonara']},
+   {label:'Борщ по богатому',aliases:['борщ','borscht']},
+   {label:'Пельмени',aliases:['пельмени','pelmeni']},
+   {label:'BBQ свиные рёбра',aliases:['ребра','рёбра','свиные ребра','bbq','ribs']},
+   {label:'Закуска к крепкому (сало)',aliases:['сало','закуска к крепкому','salo']},
+ ]},
+ {label:'Аллергены',min:5,prompt:'Назови блюда с ОРЕХАМИ',items:[
+   {label:'Овсянка с манго и кешью',aliases:['овсянка с манго','кешью','манго кешью']},
+   {label:'Гриль-сэндвич с курицей и песто',aliases:['сэндвич','сендвич','гриль сэндвич','курица бри']},
+   {label:'Брускетта с тунцом',aliases:['брускетта с тунцом','брускетта тунец','тунец брускетта']},
+   {label:'Пенне в соусе песто',aliases:['пенне','penne','пенне песто']},
+   {label:'Тропический салат с креветками',aliases:['тропический','креветки манго']},
+   {label:'Капрезе с песто',aliases:['капрезе','caprese']},
+   {label:'Куриная грудка «Маргарита»',aliases:['куриная грудка','грудка маргарита','маргарита грудка']},
+   {label:'Чёрный бургер с трюфелем',aliases:['трюфель','truffle','черный бургер']},
+   {label:'Арахис с солью',aliases:['арахис','peanuts']},
+   {label:'Шоколадный брауни',aliases:['брауни','brownie']},
+ ]},
+ {label:'Аллергены',min:4,prompt:'Назови блюда с МОРЕПРОДУКТАМИ',items:[
+   {label:'Пенне песто с креветками',aliases:['пенне','penne']},
+   {label:'Цезарь с креветками',aliases:['цезарь','caesar']},
+   {label:'Тропический салат с креветками',aliases:['тропический','креветки манго']},
+   {label:'Хот-дог с крабом',aliases:['хот дог','хотдог','краб','crab']},
+   {label:'Жареные креветки в кляре',aliases:['жареные креветки','креветки в кляре','креветки в клярe','shrimp']},
+ ]},
+];
+
+function norm(s){return (s||'').toLowerCase().replace(/ё/g,'е').replace(/[^a-zа-я0-9 ]/g,' ').replace(/\s+/g,' ').trim();}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;const d=[];for(let i=0;i<=m;i++)d[i]=[i];for(let j=0;j<=n;j++)d[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n];}
+function aliasHit(input,alias){
+  const ni=norm(input), na=norm(alias);
+  if(!ni||!na) return 0;
+  if(ni===na) return 1000;                                         // точное совпадение — главный приоритет
+  if(ni.includes(na)) return 100+na.length;                        // ввод содержит весь alias
+  if(ni.length>=3 && na.includes(ni)) return 10+ni.length;         // ввод — часть более длинного alias
+  const it=ni.split(' '), at=na.split(' ').filter(x=>x.length>=3);
+  if(at.length){
+    let okc=0;
+    for(const a of at){ if(it.some(t=>t.length>=3 && lev(t,a)<=(a.length>=6?2:1))) okc++; }
+    if(okc>=at.length) return na.length-0.5;                       // значимые слова с опечатками
+  }
+  if(ni.length>=3 && lev(ni,na)<=(na.length>=6?2:1)) return na.length-0.6;  // целиком с опечатками
+  return 0;
+}
+function bestMatch(input,items){
+  let best=-1,bestScore=0;
+  items.forEach((it,idx)=>{ let sc=0; for(const al of it.aliases) sc=Math.max(sc,aliasHit(input,al)); if(sc>bestScore){bestScore=sc;best=idx;} });
+  return bestScore>0?best:-1;
+}
+function genList(){
+  const s=rand(LIST_SETS);
+  return {type:'list',label:s.label,set:s,
+    q:`${s.prompt} — минимум <span class="hl">${s.min}</span> (всего ${s.items.length})`};
+}
+
+/* ---- UI режима «Назови сам» ---- */
+function renderList(q){
+  Q.innerHTML=`
+   <div class="scorebar"><span>Вопрос ${qIdx+1} / 10</span><span>Очки: <b>${score}</b></span></div>
+   <div class="progress"><div style="width:${qIdx/10*100}%"></div></div>
+   <div class="quizcard">
+     <div class="qtype">${q.label} · впиши сам</div>
+     <div class="qtext">${q.q}</div>
+     <div style="display:flex;gap:8px;margin-bottom:6px">
+       <input id="listIn" class="listinput" placeholder="впиши название и нажми +" autocomplete="off" autocapitalize="off">
+       <button class="addbtn" id="addBtn">＋</button>
+     </div>
+     <div id="listHint" class="listhint"></div>
+     <div class="counter" id="listCount"></div>
+     <div id="chips" class="chips"></div>
+     <div class="feedback" id="fb"></div>
+     <button class="btn ghost" id="giveBtn" onclick="listGiveUp()">Показать ответ / сдаться</button>
+     <button class="btn gold" id="actBtn" style="display:none" onclick="next()">Дальше →</button>
+   </div>`;
+  const inp=document.getElementById('listIn');
+  document.getElementById('addBtn').onclick=listAdd;
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();listAdd();}});
+  inp.focus(); updateListCounter();
+}
+function listAdd(){
+  const s=quizQuestions[qIdx].set, inp=document.getElementById('listIn');
+  const val=inp.value.trim(), hint=document.getElementById('listHint');
+  if(!val) return;
+  const idx=bestMatch(val,s.items);
+  if(idx<0){ hint.textContent='✗ «'+val+'» — нет в этом списке'; hint.className='listhint bad'; }
+  else if(listMatched.has(idx)){ hint.textContent='• «'+s.items[idx].label+'» уже названо'; hint.className='listhint dup'; }
+  else { listMatched.add(idx); hint.textContent='✓ '+s.items[idx].label; hint.className='listhint good'; renderChips(); }
+  inp.value=''; inp.focus(); updateListCounter();
+}
+function renderChips(){
+  const s=quizQuestions[qIdx].set;
+  document.getElementById('chips').innerHTML=[...listMatched].map(i=>`<span class="chipok">✓ ${s.items[i].label}</span>`).join('');
+}
+function updateListCounter(){
+  const s=quizQuestions[qIdx].set, have=listMatched.size, need=s.min;
+  const cnt=document.getElementById('listCount');
+  if(cnt) cnt.innerHTML = have>=need ? `Набрано <b>${have}</b> — достаточно ✅` : `Набрано <b>${have}</b> из <b>${need}</b> · осталось ${need-have}`;
+  if(have>=need && !answered){
+    answered=true; score++;
+    const fb=document.getElementById('fb');
+    fb.className='feedback ok';
+    fb.innerHTML=`✅ Зачёт! Можешь добавить ещё или идти дальше.<br>Все варианты (${s.items.length}): ${s.items.map(x=>x.label).join(', ')}.`;
+    const ab=document.getElementById('actBtn'); ab.style.display='block'; ab.textContent=qIdx<9?'Дальше →':'Результат';
+    document.getElementById('giveBtn').style.display='none';
+  }
+}
+function listGiveUp(){
+  const s=quizQuestions[qIdx].set; answered=true;
+  const fb=document.getElementById('fb');
+  fb.className='feedback no';
+  fb.innerHTML=`Полный список (${s.items.length}): ${s.items.map(x=>x.label).join(', ')}.<br>Ты набрал ${listMatched.size} из ${s.min}.`;
+  const ab=document.getElementById('actBtn'); ab.style.display='block'; ab.textContent=qIdx<9?'Дальше →':'Результат';
+  document.getElementById('giveBtn').style.display='none';
+}
+
+function buildPool(){
+  const gens={
+    allergen:[genAllergenWhich,genAllergenWhere,genAllergenWhereNot,genAllergenYesNo],
+    category:[genCatWhere,genCatYesNo,genFoodIng],
+    cocktail:[genCockBase,genCockByBase,genCockIng],
+    price:[genPrice,genPriceReverse,genShisha],
+    list:[genList],
+    all:[genAllergenWhich,genAllergenWhere,genAllergenWhereNot,genAllergenYesNo,
+         genCatWhere,genCatYesNo,genFoodIng,
+         genCockBase,genCockByBase,genCockIng,
+         genPrice,genPriceReverse,genShisha,genList]
+  };
+  const set = gens[quizMode]||gens.all;
+  const valid=q=>{ if(!q) return false; if(q.type==='list') return q.set&&q.set.items&&q.set.items.length>=q.set.min;
+    return q.opts&&q.opts.length>=2&&q.opts.some(o=>o.ok); };
+  const out=[], seen=new Set(); let guard=0;
+  while(out.length<10 && guard<300){ guard++; let q; try{q=rand(set)()}catch(e){continue}
+    if(!valid(q)||seen.has(q.q)) continue; seen.add(q.q); out.push(q); }
+  let g2=0;
+  while(out.length<10 && g2<100){ g2++; let q; try{q=rand(set)()}catch(e){continue} if(valid(q)) out.push(q); }
+  while(out.length<10) out.push(genPrice());
+  return out;
+}
+
+function startQuiz(){
+  quizQuestions=buildPool(); qIdx=0; score=0; renderQuestion();
+}
+function renderQuestion(){
+  answered=false; selected=[]; listMatched=new Set();
+  const q=quizQuestions[qIdx];
+  if(q.type==='list'){ renderList(q); return; }
+  const multi = q.type==='multi';
+  Q.innerHTML=`
+   <div class="scorebar"><span>Вопрос ${qIdx+1} / 10</span><span>Очки: <b>${score}</b></span></div>
+   <div class="progress"><div style="width:${(qIdx)/10*100}%"></div></div>
+   <div class="quizcard">
+     <div class="qtype">${q.label}${multi?' · выбери все':''}</div>
+     <div class="qtext">${q.q}</div>
+     <div class="opts" id="opts">
+       ${q.opts.map((o,i)=>`<div class="opt" data-i="${i}" onclick="pick(${i},${multi})">
+          ${multi?'<div class="box"></div>':''}<span>${o.t}</span></div>`).join('')}
+     </div>
+     <div class="feedback" id="fb"></div>
+     <button class="btn gold" id="actBtn" onclick="${multi?'checkMulti()':''}" ${multi?'':'disabled'}>${multi?'Проверить':'Выбери ответ'}</button>
+   </div>`;
+}
+function pick(i,multi){
+  if(answered) return;
+  if(multi){
+    const el=document.querySelector(`.opt[data-i="${i}"]`);
+    if(selected.includes(i)){selected=selected.filter(x=>x!==i);el.classList.remove('sel')}
+    else{selected.push(i);el.classList.add('sel')}
+  } else {
+    selected=[i]; checkSingle(i);
+  }
+}
+function checkSingle(i){
+  answered=true;
+  const q=quizQuestions[qIdx];
+  let ok=q.opts[i].ok;
+  document.querySelectorAll('.opt').forEach((el,idx)=>{
+    el.style.pointerEvents='none';
+    if(q.opts[idx].ok) el.classList.add('correct');
+    else if(idx===i) el.classList.add('wrong');
+  });
+  finish(ok,q);
+}
+function checkMulti(){
+  if(answered) return;
+  answered=true;
+  const q=quizQuestions[qIdx];
+  const correctIdx=q.opts.map((o,i)=>o.ok?i:-1).filter(i=>i>=0);
+  const ok = selected.length===correctIdx.length && selected.every(s=>correctIdx.includes(s));
+  document.querySelectorAll('.opt').forEach((el,idx)=>{
+    el.style.pointerEvents='none';
+    if(q.opts[idx].ok) el.classList.add('correct');
+    else if(selected.includes(idx)) el.classList.add('wrong');
+  });
+  finish(ok,q);
+}
+function finish(ok,q){
+  if(ok) score++;
+  const fb=document.getElementById('fb');
+  fb.className='feedback '+(ok?'ok':'no');
+  fb.innerHTML=(ok?'✅ Верно! ':'❌ Не совсем. ')+'<br>'+q.expl;
+  const btn=document.getElementById('actBtn');
+  btn.disabled=false; btn.textContent = qIdx<9?'Дальше →':'Результат';
+  btn.onclick=next;
+}
+function next(){
+  qIdx++;
+  if(qIdx>=10) showResults();
+  else renderQuestion();
+}
+function showResults(){
+  const pct=score*10;
+  let verdict, emoji;
+  if(score>=9){verdict='Отлично — готов к аттестации!';emoji='🔥'}
+  else if(score>=7){verdict='Хорошо, но повтори слабые места.';emoji='👍'}
+  else if(score>=5){verdict='Средне. Прогонь ещё пару раз.';emoji='📚'}
+  else {verdict='Нужно ещё поучить меню.';emoji='💪'}
+  Q.innerHTML=`<div class="results">
+     <div style="font-size:40px">${emoji}</div>
+     <div class="big">${score}/10</div>
+     <div class="lbl">${pct}% правильных</div>
+     <div class="verdict">${verdict}</div>
+     <button class="btn gold" onclick="startQuiz()">Ещё раз</button>
+     <button class="btn ghost" onclick="showQuizSetup()" style="margin-top:9px">Сменить режим</button>
+   </div>`;
+}
+
+/* init */
+buildLegend(); buildCatbar(); renderMenu();
+</script>
+</body>
+</html>
